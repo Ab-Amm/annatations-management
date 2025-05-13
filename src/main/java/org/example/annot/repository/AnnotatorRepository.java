@@ -8,5 +8,7 @@ import java.util.List;
 
 public interface AnnotatorRepository extends JpaRepository<Annotator, Long> {
     List<Annotator> findByDeletedFalse();
+
+    boolean existsByUsername(String username);
 }
 
