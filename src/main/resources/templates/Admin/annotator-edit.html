@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Annotator</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="container mt-4">
+<h2>Edit Annotator</h2>
+
+<form th:action="@{/admin/annotators/update}" method="post" th:object="${annotator}">
+    <input type="hidden" th:field="*{id}"/>
+    <div class="mb-3">
+        <label>First Name</label>
+        <input type="text" th:field="*{firstName}" class="form-control" required/>
+    </div>
+    <div class="mb-3">
+        <label>Last Name</label>
+        <input type="text" th:field="*{lastName}" class="form-control" required/>
+    </div>
+    <button class="btn btn-primary" type="submit">Update</button>
+    <a href="/admin/annotators" class="btn btn-secondary">Cancel</a>
+</form>
+
+</body>
+</html>

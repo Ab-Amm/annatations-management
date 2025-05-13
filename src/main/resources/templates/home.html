@@ -6,7 +6,7 @@
 <body>
 <h1>Welcome, <span th:text="${#authentication.name}"></span>!</h1>
 <div sec:authorize="hasRole('ADMIN')">
-    <a href="/admin/dashboard">Admin Dashboard</a>
+    <a th:href="@{/admin/annotators}">Manage Annotators</a>
 </div>
 <form th:action="@{/logout}" method="post">
     <input type="submit" value="Sign Out"/>
