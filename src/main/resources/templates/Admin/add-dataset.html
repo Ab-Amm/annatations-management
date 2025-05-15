@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Dataset</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Add a New Dataset</h2>
+
+    <form th:action="@{/admin/datasets/add}" th:object="${dataset}" method="post" enctype="multipart/form-data">
+
+        <!-- Dataset Name -->
+        <div class="form-group">
+            <label for="name">Dataset Name</label>
+            <input type="text" id="name" class="form-control" th:field="*{name}" placeholder="Enter dataset name" required>
+        </div>
+
+        <!-- Dataset Description -->
+        <div class="form-group">
+            <label for="description">Dataset Description</label>
+            <textarea id="description" class="form-control" th:field="*{description}" rows="3" placeholder="Enter dataset description" required></textarea>
+        </div>
+
+        <!-- Possible Classes -->
+        <div class="form-group">
+            <label for="classes">Possible Classes (separate with semicolon)</label>
+            <textarea id="classes" name="classes" class="form-control" rows="5" placeholder="Enter classes separated by semicolons" required></textarea>
+        </div>
+
+
+        <!-- CSV File -->
+        <div class="form-group">
+            <label for="file">Upload CSV File (text1,text2):</label>
+            <input type="file" id="file" class="form-control-file" name="file" accept=".csv" required><br><br>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary">Save Dataset</button>
+    </form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

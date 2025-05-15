@@ -23,7 +23,7 @@ public class AnnotatorManagementController {
 
     @GetMapping
     public String listAnnotators(Model model) {
-        model.addAttribute("annotators", annotatorManagementService.findAllAnnotators());  // You might add a method in service for this.
+        model.addAttribute("annotators", annotatorManagementService.findAllAnnotators());
         model.addAttribute("annotator", new Annotator());
         return "Admin/admin-annotators";
     }
