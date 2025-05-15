@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -28,33 +26,35 @@ public class TaskService {
     private AnnotatorRepository annotatorRepository;
 
     public void assignTextsToAnnotators(Dataset dataset, List<Annotator> annotators, LocalDate deadline) {
-        List<CoupleText> allTexts = coupleTextRepository.findByDataset(dataset);
+
+        List<CoupleText> allCouples = coupleTextRepository.findByDataset(dataset);
 
 
-        Collections.shuffle(allTexts);
+        int annotatorCount = annotators.size();
+        int batchSize = allCouples.size() / annotatorCount;
+        int remaining = allCouples.size() % annotatorCount;
+        int startIndex = 0;
 
-        int totalAnnotators = annotators.size();
-        int chunkSize = allTexts.size() / totalAnnotators;
-        int remainder = allTexts.size() % totalAnnotators;
+        for (int i = 0; i < annotators.size(); i++) {
+            int endIndex = startIndex + batchSize + (i < remaining ? 1 : 0);
+            List<CoupleText> subList = allCouples.subList(startIndex, endIndex);
 
-        int index = 0;
-
-        for (int i = 0; i < totalAnnotators; i++) {
-            Annotator annotator = annotators.get(i);
-
-            int currentChunkSize = chunkSize + (i < remainder ? 1 : 0); // distribute the remainder
-            List<CoupleText> assignedTexts = allTexts.subList(index, index + currentChunkSize);
 
             Task task = new Task();
-            task.setAnnotator(annotator);
             dataset.setAnnotated(true);
             task.setDataset(dataset);
+            task.setAnnotator(annotators.get(i));
             task.setDeadline(deadline);
-            task.setCoupleTexts(new HashSet<>(assignedTexts));
+            task.setPercentageDone(0);
+            task = taskRepository.save(task);
 
-            taskRepository.save(task);
 
-            index += currentChunkSize;
+            for (CoupleText ct : subList) {
+                ct.setTask(task);
+                coupleTextRepository.save(ct);
+            }
+
+            startIndex = endIndex;
         }
     }
 }

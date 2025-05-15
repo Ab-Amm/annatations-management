@@ -42,8 +42,6 @@ public class DatasetController {
     @Autowired
     private TaskService taskService;
 
-
-
     @GetMapping
     public String showDatasets(Model model) {
         List<Dataset> datasets = datasetRepository.findAll();
@@ -88,9 +86,7 @@ public class DatasetController {
                 coupleTextRepository.save(couple);
             }
         }
-
         return "redirect:/admin/datasets";
-
     }
 
     @GetMapping("/assign/{id}")
@@ -98,16 +94,12 @@ public class DatasetController {
         Dataset dataset = datasetRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("Invalid dataset ID: " + id)
         );
-
         List<Annotator> annotators = annotatorRepository.findByDeletedFalse();
-
         model.addAttribute("dataset", dataset);
         model.addAttribute("annotators", annotators);
         System.out.println("Annotators test get : " + annotators);
         return "Admin/assign-annotators";
     }
-
-
 
     @PostMapping("/assign")
     public String assignAnnotatorsToDataset(
@@ -122,8 +114,6 @@ public class DatasetController {
 
         return "redirect:/admin/datasets";
     }
-
-
 }
 
 

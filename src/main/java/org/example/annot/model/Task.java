@@ -22,6 +22,9 @@ public class Task {
 
     private LocalDate deadline;
 
+    @Column(nullable = false)
+    private int percentageDone = 0;
+
     @ManyToOne
     private Annotator annotator;
 

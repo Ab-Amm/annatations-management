@@ -24,6 +24,9 @@ public class CoupleText {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String text2;
 
+    @Column(nullable = false)
+    private boolean done = false;
+
     @ManyToOne
     private Dataset dataset;
 
