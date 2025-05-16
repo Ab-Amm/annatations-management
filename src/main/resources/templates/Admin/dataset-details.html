@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.th3.org/1999/xhtml">
+<head>
+    <title>Dataset Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h2 th:text="${dataset.name}">Dataset Name</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <p class="mb-1"><strong>Total Text Pairs:</strong>
+                        <span th:text="${#numbers.formatInteger(totalCouples, 1, 'COMMA')}">0</span>
+                    </p>
+                    <p class="mb-1"><strong>Completion:</strong>
+                        <span th:text="${completionPercentage} + '%'">0%</span>
+                    </p>
+                </div>
+                <div class="col-md-8">
+                    <p th:text="${dataset.description}" class="text-muted">Description</p>
+                </div>
+            </div>
+            <div class="progress mt-2">
+                <div class="progress-bar bg-success"
+                     role="progressbar"
+                     th:style="'width: ' + ${completionPercentage} + '%'"
+                     th:aria-valuenow="${completionPercentage}"
+                     aria-valuemin="0"
+                     aria-valuemax="100">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Classes Section -->
+    <div class="card mb-4">
+        <div class="card-header bg-secondary text-white">
+            <h5>Classes</h5>
+        </div>
+        <div class="card-body">
+            <div class="d-flex flex-wrap gap-2">
+                <span th:each="classe : ${dataset.classesPossible}"
+                      class="badge bg-info text-dark"
+                      th:text="${classe.touteClasse}">
+                    Class
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Text Pairs Section -->
+    <div class="card mb-4">
+        <div class="card-header bg-warning text-dark">
+            <h5>Text Pairs <small>(Showing <span th:text="${currentPage * 100}"></span>-<span
+                    th:text="${(currentPage + 1) * 100 > totalCouples ? totalCouples : (currentPage + 1) * 100}"></span>
+                of <span th:text="${totalCouples}"></span>)</small></h5>
+        </div>
+        <div class="card-body">
+            <div class="list-group mb-3">
+                <div th:each="couple : ${couplesPage}"
+                     class="list-group-item">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Text 1:</strong>
+                            <span th:text="${couple.text1}"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Text 2:</strong>
+                            <span th:text="${couple.text2}"></span>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <span th:if="${couple.done}" class="badge bg-success">Annotated</span>
+                        <span th:unless="${couple.done}" class="badge bg-secondary">Pending</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:class="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/datasets/details/{id}(id=${dataset.id}, page=${currentPage - 1})}">
+                            Previous
+                        </a>
+                    </li>
+                    <li class="page-item active">
+                        <span class="page-link" th:text="${currentPage + 1}">1</span>
+                    </li>
+                    <li class="page-item"
+                        th:class="${(currentPage + 1) * 100 >= totalCouples} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/datasets/details/{id}(id=${dataset.id}, page=${currentPage + 1})}">
+                            Next
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Annotators Section -->
+    <div class="card">
+        <div class="card-header bg-info text-white">
+            <h5>Assigned Annotators</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div th:each="task : ${dataset.tasks}"
+                     class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 th:text="${task.annotator.firstName + ' ' + task.annotator.lastName}">
+                                Annotator Name
+                            </h6>
+                            <p class="mb-1">Deadline:
+                                <span th:text="${#temporals.format(task.deadline, 'dd MMM yyyy')}"></span>
+                            </p>
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar"
+                                     role="progressbar"
+                                     th:style="'width: ' + ${task.percentageDone} + '%'"
+                                     th:text="${task.percentageDone} + '%'">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -81,7 +81,6 @@
                 <form th:action="@{/admin/datasets/details/{id}(id=${dataset.id})}" method="get">
                     <button type="submit">View Details</button>
                 </form>
-
                 <div th:if="${!dataset.annotated}">
                     <form th:action="@{/admin/datasets/assign/{id}(id=${dataset.id})}" method="get">
                         <button type="submit">Assign Annotators</button>
@@ -91,7 +90,6 @@
                     <span style="color: green; font-weight: bold;">Annotated</span>
                 </div>
             </td>
-
         </tr>
         </tbody>
     </table>

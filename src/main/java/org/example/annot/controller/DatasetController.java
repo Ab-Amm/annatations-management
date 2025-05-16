@@ -1,5 +1,8 @@
 package org.example.annot.controller;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.example.annot.model.Annotator;
 import org.example.annot.model.ClassePossible;
 import org.example.annot.model.CoupleText;
@@ -76,16 +79,18 @@ public class DatasetController {
             classePossibleRepository.save(cp);
         }
 
-        // Parse CSV and save CoupleText
         BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            String[] parts = line.split(",", 2);
-            if (parts.length == 2) {
-                CoupleText couple = new CoupleText(parts[0].trim(), parts[1].trim(), dataset);
+        CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
+
+        for (CSVRecord record : csvParser) {
+            if (record.size() >= 2) {
+                String text1 = record.get(0).trim();
+                String text2 = record.get(1).trim();
+                CoupleText couple = new CoupleText(text1, text2, dataset);
                 coupleTextRepository.save(couple);
             }
         }
+        csvParser.close();
         return "redirect:/admin/datasets";
     }
 
@@ -113,6 +118,36 @@ public class DatasetController {
         taskService.assignTextsToAnnotators(dataset, annotators, deadline);
 
         return "redirect:/admin/datasets";
+    }
+
+    @GetMapping("/details/{id}")
+    public String getDatasetDetails(@PathVariable Long id,
+                                    @RequestParam(defaultValue = "0") int page,
+                                    Model model) {
+        Dataset dataset = datasetRepository.findById(id).orElseThrow();
+        int pageSize = 100;
+
+        // Get paginated couples
+        List<CoupleText> allCouples = coupleTextRepository.findByDataset(dataset);
+        int totalCouples = allCouples.size();
+        int totalPages = (int) Math.ceil((double) totalCouples / pageSize);
+        List<CoupleText> couplesPage = allCouples.subList(
+                page * pageSize,
+                Math.min((page + 1) * pageSize, totalCouples)
+        );
+
+        // Calculate completion percentage
+        long annotatedCount = allCouples.stream().filter(CoupleText::isDone).count();
+        double completionPercentage = totalCouples > 0 ?
+                (annotatedCount * 100.0) / totalCouples : 0.0;
+
+        model.addAttribute("dataset", dataset);
+        model.addAttribute("couplesPage", couplesPage);
+        model.addAttribute("totalCouples", totalCouples);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("completionPercentage", Math.round(completionPercentage));
+
+        return "Admin/dataset-details";
     }
 }
 
