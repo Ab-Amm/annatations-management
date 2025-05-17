@@ -149,6 +149,33 @@ public class DatasetController {
 
         return "Admin/dataset-details";
     }
+
+    @GetMapping("/edit/{id}")
+    public String showEditForm(@PathVariable Long id, Model model) {
+        Dataset dataset = datasetRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid dataset ID: " + id));
+        model.addAttribute("dataset", dataset);
+        return "Admin/edit-dataset";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String updateDataset(
+            @PathVariable Long id,
+            @RequestParam String name,
+            @RequestParam String description) {
+        Dataset dataset = datasetRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid dataset ID: " + id));
+        dataset.setName(name);
+        dataset.setDescription(description);
+        datasetRepository.save(dataset);
+        return "redirect:/admin/datasets";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteDataset(@PathVariable Long id) {
+        datasetRepository.deleteById(id);
+        return "redirect:/admin/datasets";
+    }
 }
 
 

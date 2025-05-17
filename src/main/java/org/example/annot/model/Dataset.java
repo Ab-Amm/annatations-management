@@ -25,13 +25,13 @@ public class Dataset {
 
     private boolean annotated = false;
 
-    @OneToMany(mappedBy = "dataset")
+    @OneToMany(mappedBy = "dataset", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<ClassePossible> classesPossible;
 
-    @OneToMany(mappedBy = "dataset")
+    @OneToMany(mappedBy = "dataset", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<CoupleText> coupleText;
 
-    @OneToMany(mappedBy = "dataset")
+    @OneToMany(mappedBy = "dataset", orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<Task> tasks = new HashSet<>();
 
 
