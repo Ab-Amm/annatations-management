@@ -8,10 +8,13 @@ import org.example.annot.repository.AnnotatorRepository;
 import org.example.annot.repository.CoupleTextRepository;
 import org.example.annot.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TaskService {
@@ -45,7 +48,7 @@ public class TaskService {
             task.setDataset(dataset);
             task.setAnnotator(annotators.get(i));
             task.setDeadline(deadline);
-            task.setPercentageDone(0);
+            task.setCouplesDone(0);
             task = taskRepository.save(task);
 
 
@@ -57,5 +60,26 @@ public class TaskService {
             startIndex = endIndex;
         }
     }
+
+
+    public Task getTaskWithCouples(Long taskId) {
+        Task task = taskRepository.findById(taskId).orElse(null);
+        if (task != null) {
+            task.setCoupleTexts(coupleTextRepository.findByTask(task));
+        }
+        return task;
+    }
+
+    public CoupleText getCoupleText(Long coupleId) {
+        return coupleTextRepository.findById(coupleId).orElse(null);
+    }
+
+    public void saveTask(Task task) {
+        taskRepository.save(task);
+    }
+
+
+
+
 }
 

@@ -55,8 +55,8 @@
                         <div class="progress">
                             <div class="progress-bar bg-success"
                                  role="progressbar"
-                                 th:style="'width: ' + ${task.percentageDone} + '%'"
-                                 th:text="${task.percentageDone} + '%'">
+                                 th:style="'width: ' + ${task.couplesDone} + '%'"
+                                 th:text="${task.couplesDone * 100 / task.coupleTexts.size()}  + '%'">
                                 75%
                             </div>
                         </div>
@@ -67,11 +67,17 @@
                             </span>
                     </td>
                     <td>
-                        <a th:href="@{/annotate/task/{id}(id=${task.id})}"
+                        <a th:if="${task.couplesDone * 100 / task.coupleTexts.size()} != 100"
+                           th:href="@{/annotator/tasks/annotateTask/{id}(id=${task.id})}"
                            class="btn btn-primary action-btn">
                             Start Annotating
                         </a>
+                        <span th:unless="${task.couplesDone * 100 / task.coupleTexts.size()} != 100"
+                              class="text-success fw-bold">
+                                Done
+                        </span>
                     </td>
+
                 </tr>
                 <tr th:if="${#lists.isEmpty(annotator.tasks)}">
                     <td colspan="6" class="text-center text-muted py-4">

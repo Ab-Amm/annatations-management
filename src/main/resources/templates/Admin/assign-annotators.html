@@ -18,25 +18,57 @@
             cursor: pointer;
         }
     </style>
+    <script>
+        function validateDeadlineAndAnnotators() {
+            const deadlineInput = document.getElementById("deadline");
+            const errorDiv = document.getElementById("deadlineError");
+            const checkboxes = document.querySelectorAll("input[name='annotatorIds']:checked");
+
+            const selectedDate = new Date(deadlineInput.value);
+            const today = new Date();
+            selectedDate.setHours(0, 0, 0, 0);
+            today.setHours(0, 0, 0, 0);
+
+            const minDate = new Date(today);
+            minDate.setDate(today.getDate() + 2);
+
+            let valid = true;
+            errorDiv.innerHTML = ""; // Clear previous errors
+
+            if (selectedDate < minDate) {
+                errorDiv.innerHTML += "⛔ Deadline must be at least 2 days from today.<br>";
+                valid = false;
+            }
+
+            if (checkboxes.length === 0) {
+                errorDiv.innerHTML += "⛔ Please select at least one annotator.";
+                valid = false;
+            }
+
+            errorDiv.style.display = valid ? "none" : "block";
+            return valid;
+        }
+    </script>
+
 </head>
 <body>
 <h2 th:text="'Assign Annotators to Dataset: ' + ${dataset.name}">Assign Annotators</h2>
 
 <form th:action="@{/admin/datasets/assign}" method="post">
     <input type="hidden" name="datasetId" th:value="${dataset.id}" />
-
     <div class="annotator-list">
         <div th:each="annotator : ${annotators}" class="annotator-item">
             <input type="checkbox" name="annotatorIds" th:value="${annotator.id}" />
             <label th:text="${annotator.firstName}">Annotator Name</label>
         </div>
     </div>
-
     <label for="deadline">Deadline:</label>
-    <input type="date" name="deadline" id="deadline" required style="margin-bottom: 20px;" />
-
+    <input type="date" name="deadline" id="deadline" required style="margin-bottom: 10px;" />
+    <div id="deadlineError" style="color: red; margin-bottom: 20px; display: none;">
+        Deadline must be at least 2 days from today.
+    </div>
     <br><br>
-    <input type="submit" value="Validate & Assign" />
+    <input type="submit" value="Validate & Assign" onclick="return validateDeadlineAndAnnotators()" />
 </form>
 </body>
 </html>

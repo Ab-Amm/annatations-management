@@ -5,6 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Dataset</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <script>
+        function validateForm(event) {
+            const name = document.getElementById("name").value.trim();
+            const description = document.getElementById("description").value.trim();
+            const classes = document.getElementById("classes").value.trim();
+            const file = document.getElementById("file").value;
+
+            const classList = classes.split(";").map(str => str.trim()).filter(str => str.length > 0);
+
+            let errorMessage = "";
+
+            if (!name || !description || !classes || !file) {
+                errorMessage += "All fields are required.<br>";
+            }
+
+            if (classList.length < 2) {
+                errorMessage += "Please enter at least two classes separated by a semicolon.";
+            }
+
+            if (errorMessage) {
+                event.preventDefault();
+                showError(errorMessage);
+            }
+        }
+
+        function showError(message) {
+            let errorDiv = document.getElementById("errorDiv");
+            if (!errorDiv) {
+                errorDiv = document.createElement("div");
+                errorDiv.id = "errorDiv";
+                errorDiv.className = "alert alert-danger";
+                document.querySelector("form").prepend(errorDiv);
+            }
+            errorDiv.innerHTML = message;
+        }
+
+        document.querySelector("form").addEventListener("submit", validateForm);
+    </script>
+
+
 </head>
 <body>
 <div class="container mt-5">
@@ -40,6 +81,8 @@
         <!-- Submit Button -->
         <button type="submit" class="btn btn-primary">Save Dataset</button>
     </form>
+    <div id="errorDiv" style="display:none;"></div>
+
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
