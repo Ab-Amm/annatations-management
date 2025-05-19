@@ -13,4 +13,6 @@ import java.util.Optional;
 public interface AnnotationRepository extends JpaRepository<Annotation, Long> {
 
     Optional<Annotation> findByCoupleTextIdAndAnnotatorId(Long coupleTextId, Long annotatorId);
+
+
 }

@@ -100,7 +100,7 @@
     </div>
 
     <!-- Completion Message -->
-    <div th:unless="${currentCouple}" class="alert alert-success">
+    <div th:unless="${!task.allCouplesDone}" class="alert alert-success">
         <h4>Annotation Complete! 🎉</h4>
         <p>You've finished all text pairs in this task.</p>
         <a th:href="@{/annotator/tasks}" class="btn btn-success">

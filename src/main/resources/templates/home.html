@@ -13,6 +13,7 @@
 <div sec:authorize="hasRole('ANNOTATOR')">
     <a th:href="@{/annotator/tasks}">See Tasks</a>
     <br>
+    <a th:href="@{/annotator/stats}" class="btn btn-link">My Statistics</a>
 </div>
 <form th:action="@{/logout}" method="post">
     <input type="submit" value="Sign Out"/>

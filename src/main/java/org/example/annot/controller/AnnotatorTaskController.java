@@ -115,9 +115,13 @@ public class AnnotatorTaskController {
             annotation.setChosenClass(selectedClass);
             annotationService.saveAnnotation(annotation);
 
+
             // Update task progress
             Task task = coupleText.getTask();
             task.setCouplesDone(task.getCouplesDone() + 1);
+            if(task.getCouplesDone() == task.getCoupleTexts().size()) {
+                task.setAllCouplesDone(true);
+            }
             taskService.saveTask(task);
         }
 

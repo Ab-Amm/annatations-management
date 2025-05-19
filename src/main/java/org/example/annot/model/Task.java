@@ -25,6 +25,9 @@ public class Task {
     @Column(nullable = false)
     private int couplesDone = 0;
 
+    @Column(nullable = false)
+    private boolean allCouplesDone = false;
+
     @ManyToOne
     private Annotator annotator;
 
