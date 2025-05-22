@@ -25,6 +25,12 @@ public class Dataset {
 
     private boolean annotated = false;
 
+    private boolean assigned = false;
+
+    private double couplesDone = 0;
+
+    private double totalCouples = 0;
+
     @OneToMany(mappedBy = "dataset", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<ClassePossible> classesPossible;
 

@@ -1,93 +1,109 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/annot-main-layout}"
+      lang="en">
 <head>
-    <title>My Tasks</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .task-table {
-            margin: 2rem auto;
-            max-width: 1200px;
-        }
-        .progress-container {
-            min-width: 150px;
-        }
-        .action-btn {
-            white-space: nowrap;
-        }
-    </style>
-</head>
-<body class="bg-light">
-<div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="my-4">Welcome, <span sec:authentication="name"></span></h1>
-        <form th:action="@{/logout}" method="post">
-            <button type="submit" class="btn btn-secondary">Logout</button>
-        </form>
-    </div>
+    <th:block layout:fragment="title">My Tasks</th:block>
 
-    <div class="card task-table">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">My Annotation Tasks</h4>
+    <!-- Page specific CSS -->
+    <th:block layout:fragment="pageCss">
+        <style>
+            .annotation-container {
+                max-width: 1200px;
+                margin: 2rem auto;
+            }
+            .hover-card .form-check-label {
+                transition: all 0.2s ease;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<!-- Content section that will be inserted into the layout's content fragment -->
+<div layout:fragment="content">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="mb-0">My Annotation Tasks</h3>
         </div>
 
         <div class="card-body">
-            <table class="table table-hover">
-                <thead class="table-light">
-                <tr>
-                    <th>Task ID</th>
-                    <th>Dataset</th>
-                    <th>Deadline</th>
-                    <th>Progress</th>
-                    <th>Items Remaining</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="task : ${annotator.tasks}" th:if="${task.coupleTexts}">
-                    <td th:text="${task.id}">123</td>
-                    <td th:text="${task.dataset.name}">Dataset Name</td>
-                    <td>
-                            <span th:text="${#temporals.format(task.deadline, 'dd MMM yyyy')}">
-                                31 Dec 2024
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th>Task ID</th>
+                        <th>Dataset</th>
+                        <th>Deadline</th>
+                        <th>Progress</th>
+                        <th>Items Remaining</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="task : ${annotator.tasks}" th:if="${task.coupleTexts}">
+                        <td th:text="${task.id}">123</td>
+                        <td th:text="${task.dataset.name}">Dataset Name</td>
+                        <td>
+                            <span class="badge bg-primary">
+                                <i class="bi bi-calendar-check me-2"></i>
+                                <span th:text="${#temporals.format(task.deadline, 'dd MMM yyyy')}">31 Dec 2024</span>
                             </span>
-                    </td>
-                    <td class="progress-container">
-                        <div class="progress">
-                            <div class="progress-bar bg-success"
-                                 role="progressbar"
-                                 th:style="'width: ' + ${task.couplesDone} + '%'"
-                                 th:text="${task.couplesDone * 100 / task.coupleTexts.size()}  + '%'">
-                                75%
+                        </td>
+                        <td>
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar bg-success"
+                                     role="progressbar"
+                                     th:style="'width: ' + ${task.couplesDone * 100 / task.coupleTexts.size()} + '%'"
+                                     th:text="${#numbers.formatDecimal(task.couplesDone * 100 / task.coupleTexts.size(), 1, 2)} + '%'">
+                                    75%
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                    <td>
-                            <span th:text="${task.coupleTexts.size()} + ' items'">
-                                100 items
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">
+                                <i class="bi bi-file-text me-2"></i>
+                                <span th:text="${task.coupleTexts.size() - task.couplesDone} + ' left'">100 left</span>
                             </span>
-                    </td>
-                    <td>
-                        <a th:if="${task.couplesDone * 100 / task.coupleTexts.size()} != 100"
-                           th:href="@{/annotator/tasks/annotateTask/{id}(id=${task.id})}"
-                           class="btn btn-primary action-btn">
-                            Start Annotating
-                        </a>
-                        <span th:unless="${task.couplesDone * 100 / task.coupleTexts.size()} != 100"
-                              class="text-success fw-bold">
-                                Done
-                        </span>
-                    </td>
+                        </td>
+                        <td>
+                            <a th:if="${task.couplesDone * 100 / task.coupleTexts.size()} != 100"
+                               th:href="@{/annotator/tasks/annotateTask/{id}(id=${task.id})}"
+                               class="btn btn-sm btn-primary">
+                                <i class="bi bi-pencil-square me-2"></i>Continue
+                            </a>
+                            <span th:if="${task.couplesDone * 100 / task.coupleTexts.size()} == 100"
+                                  class="badge bg-success">
+                                <i class="bi bi-check-circle me-2"></i>Completed
+                            </span>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(annotator.tasks)}">
+                        <td colspan="6" class="text-center py-5">
+                            <div class="empty-state">
+                                <i class="bi bi-clipboard-x display-1 text-muted"></i>
+                                <h4 class="mt-4 text-secondary">No tasks assigned</h4>
+                                <p class="text-muted">You don't have any annotation tasks yet.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-                </tr>
-                <tr th:if="${#lists.isEmpty(annotator.tasks)}">
-                    <td colspan="6" class="text-center text-muted py-4">
-                        No tasks assigned yet
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+        <div class="card-footer bg-transparent">
+            <small class="text-muted">
+                Showing <span th:text="${annotator.tasks.size()}">0</span> tasks
+            </small>
         </div>
     </div>
 </div>
+
+<!-- Page specific JavaScript -->
+<th:block layout:fragment="pageScripts">
+    <!-- Any task-specific scripts would go here -->
+</th:block>
 </body>
 </html>

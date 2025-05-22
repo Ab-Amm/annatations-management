@@ -12,7 +12,6 @@ import lombok.*;
 @EqualsAndHashCode(exclude = {"annotator", "coupleText"})
 public class Annotation {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,10 +21,9 @@ public class Annotation {
     @ManyToOne
     private Annotator annotator;
 
-    @ManyToOne
+    @OneToOne
+    @JoinColumn(name = "couple_text_id", unique = true)
     private CoupleText coupleText;
-
-
 
 
 }

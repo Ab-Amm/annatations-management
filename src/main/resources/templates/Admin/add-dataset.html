@@ -1,67 +1,95 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Dataset</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
-
     <style>
+        /* Variables */
+        :root {
+            --primary-color: #006400;      /* Dark green (Thymeleaf brand color) */
+            --primary-light: #008000;      /* Lighter green for hover states */
+            --primary-very-light: #f0f7f0; /* Very light green for backgrounds */
+            --secondary-color: #4a4a4a;    /* Dark gray for secondary elements */
+            --text-color: #333333;         /* Dark gray for text */
+            --border-color: #dddddd;       /* Light gray for borders */
+            --shadow-color: rgba(0, 100, 0, 0.1); /* Green-tinted shadow */
+            --error-color: #dc3545;        /* Error red */
+        }
+
+        /* Base Styles */
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+
         /* Container styling */
         .container {
-            background-color: #f9f9f9;
-            border-radius: 10px;
-            padding: 30px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            max-width: 800px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 16px var(--shadow-color);
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            animation: fadeIn 0.4s ease-out;
         }
 
         /* Page Title */
         h2 {
-            color: #2c3e50;
-            margin-bottom: 25px;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
             text-align: center;
             font-weight: 600;
-            letter-spacing: 1px;
             position: relative;
+            padding-bottom: 0.5rem;
         }
 
         h2::after {
             content: "";
             width: 60px;
             height: 3px;
-            background: #3498db;
+            background: var(--primary-color);
             position: absolute;
-            bottom: -10px;
+            bottom: 0;
             left: 50%;
             transform: translateX(-50%);
         }
 
         /* Form Group Styling */
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
             transition: all 0.3s ease;
         }
 
         /* Label Styling */
         label {
             font-weight: 500;
-            color: #34495e;
-            margin-bottom: 8px;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
             display: block;
         }
 
         /* Input Fields */
         .form-control {
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            padding: 12px 15px;
-            font-size: 16px;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            min-width: 70%;
         }
 
         .form-control:focus {
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px var(--shadow-color);
             outline: none;
         }
 
@@ -70,35 +98,72 @@
             resize: vertical;
             min-height: 120px;
             line-height: 1.5;
-            padding-top: 10px;
-            padding-bottom: 10px;
         }
 
         /* File Input Styling */
         input[type="file"].form-control-file {
-            padding: 5px;
-            background: #fff;
-            border: 1px solid #ddd;
+            padding: 0.5rem;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            width: 100%;
+        }
+
+        /* Custom file input styling */
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            margin-top: 0.5rem;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-upload-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary-very-light);
+            color: var(--primary-color);
+            border: 1px dashed var(--primary-color);
+            border-radius: 6px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-label:hover {
+            background-color: #e6f0e6;
+        }
+
+        .file-upload-icon {
+            margin-right: 0.5rem;
+        }
+
+        .file-name {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--secondary-color);
         }
 
         /* Submit Button Styling */
         .btn-primary {
-            background-color: #3498db;
-            border-color: #3498db;
-            padding: 12px 25px;
-            font-size: 16px;
-            border-radius: 30px;
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 6px;
             transition: all 0.3s ease;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2);
+            font-weight: 500;
+            box-shadow: 0 4px 6px var(--shadow-color);
+            color: white;
         }
 
         .btn-primary:hover {
-            background-color: #2980b9;
-            border-color: #2980b9;
+            background-color: var(--primary-light);
+            border-color: var(--primary-light);
             transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(52, 152, 219, 0.3);
+            box-shadow: 0 6px 8px var(--shadow-color);
         }
 
         .btn-primary:active {
@@ -106,11 +171,33 @@
         }
 
         /* Error Message Styling */
-        #errorDiv {
-            margin-top: 20px;
-            border-radius: 8px;
+        .alert-danger {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--error-color);
+            border: 1px solid rgba(220, 53, 69, 0.2);
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
             animation: fadeInUp 0.5s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        #errorDiv {
+            margin-top: 1rem;
+        }
+
+        /* Helper text */
+        .form-text {
+            color: var(--secondary-color);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: block;
+            margin-left: 0.25rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes fadeInUp {
@@ -124,97 +211,166 @@
             }
         }
 
+        /* Form actions */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+        }
+
+        .btn-secondary {
+            background-color: #f8f9fa;
+            border-color: var(--border-color);
+            color: var(--secondary-color);
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e9ecef;
+            color: var(--text-color);
+        }
+
         /* Responsive Design */
         @media (max-width: 576px) {
             .container {
-                padding: 20px;
+                padding: 1.5rem;
             }
 
-            .btn-primary {
+            .form-actions {
+                flex-direction: column-reverse;
+                gap: 1rem;
+            }
+
+            .btn-primary, .btn-secondary {
                 width: 100%;
             }
         }
-        </style>
-
-    <script>
-        function validateForm(event) {
-            const name = document.getElementById("name").value.trim();
-            const description = document.getElementById("description").value.trim();
-            const classes = document.getElementById("classes").value.trim();
-            const file = document.getElementById("file").value;
-
-            const classList = classes.split(";").map(str => str.trim()).filter(str => str.length > 0);
-
-            let errorMessage = "";
-
-            if (!name || !description || !classes || !file) {
-                errorMessage += "All fields are required.<br>";
-            }
-
-            if (classList.length < 2) {
-                errorMessage += "Please enter at least two classes separated by a semicolon.";
-            }
-
-            if (errorMessage) {
-                event.preventDefault();
-                showError(errorMessage);
-            }
-        }
-
-        function showError(message) {
-            let errorDiv = document.getElementById("errorDiv");
-            if (!errorDiv) {
-                errorDiv = document.createElement("div");
-                errorDiv.id = "errorDiv";
-                errorDiv.className = "alert alert-danger";
-                document.querySelector("form").prepend(errorDiv);
-            }
-            errorDiv.innerHTML = message;
-        }
-
-        document.querySelector("form").addEventListener("submit", validateForm);
-    </script>
-
-
+    </style>
 </head>
 <body>
-<div class="container mt-5">
+<div class="container">
     <h2>Add a New Dataset</h2>
 
-    <form th:action="@{/admin/datasets/add}" th:object="${dataset}" method="post" enctype="multipart/form-data">
+    <form th:action="@{/admin/datasets/add}" th:object="${dataset}" method="post" enctype="multipart/form-data" id="datasetForm">
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div id="errorDiv" class="alert alert-danger" style="display:none;"></div>
 
         <!-- Dataset Name -->
         <div class="form-group">
             <label for="name">Dataset Name</label>
-            <input type="text" id="name" class="form-control" th:field="*{name}" placeholder="Enter dataset name" required>
+            <input type="text" id="name" class="form-control" th:field="*{name}" placeholder="Enter a descriptive name for your dataset" required>
+            <small class="form-text">Choose a clear, unique name that describes the dataset's purpose.</small>
         </div>
 
         <!-- Dataset Description -->
         <div class="form-group">
             <label for="description">Dataset Description</label>
-            <textarea id="description" class="form-control" th:field="*{description}" rows="3" placeholder="Enter dataset description" required></textarea>
+            <textarea id="description" class="form-control" th:field="*{description}" rows="3" placeholder="Provide details about the dataset content and purpose" required></textarea>
+            <small class="form-text">Include information about the data source, format, and intended use.</small>
         </div>
 
         <!-- Possible Classes -->
         <div class="form-group">
-            <label for="classes">Possible Classes (separate with semicolon)</label>
-            <textarea id="classes" name="classes" class="form-control" rows="5" placeholder="Enter classes separated by semicolons" required></textarea>
+            <label for="classes">Possible Classes</label>
+            <textarea id="classes" name="classes" class="form-control" rows="4" placeholder="Enter classes separated by semicolons (e.g., Positive;Negative;Neutral)" required></textarea>
+            <small class="form-text">Each class represents a category for annotation. Separate multiple classes with semicolons.</small>
         </div>
-
 
         <!-- CSV File -->
         <div class="form-group">
-            <label for="file">Upload CSV File (text1,text2):</label>
-            <input type="file" id="file" class="form-control-file" name="file" accept=".csv" required><br><br>
+            <label for="file">Upload CSV File</label>
+            <div class="file-upload">
+                <label for="file" class="file-upload-label">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="file-upload-icon">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    Click to select CSV file or drag and drop
+                </label>
+                <input type="file" id="file" class="form-control-file" name="file" accept=".csv" required style="display: none;">
+                <div id="file-name" class="file-name"></div>
+            </div>
+            <small class="form-text">The CSV file should contain two columns: text1,text2 (no header row needed).</small>
         </div>
 
-        <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary">Save Dataset</button>
+        <!-- Form Actions -->
+        <div class="form-actions">
+            <a th:href="@{/admin/datasets}" class="btn btn-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Cancel
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                    <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+                Save Dataset
+            </button>
+        </div>
     </form>
-    <div id="errorDiv" style="display:none;"></div>
-
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Form validation
+    function validateForm(event) {
+        const name = document.getElementById("name").value.trim();
+        const description = document.getElementById("description").value.trim();
+        const classes = document.getElementById("classes").value.trim();
+        const file = document.getElementById("file").value;
+
+        const classList = classes.split(";").map(str => str.trim()).filter(str => str.length > 0);
+
+        let errorMessage = "";
+
+        if (!name || !description || !classes || !file) {
+            errorMessage += "All fields are required.<br>";
+        }
+
+        if (classList.length < 2) {
+            errorMessage += "Please enter at least two classes separated by a semicolon.";
+        }
+
+        if (errorMessage) {
+            event.preventDefault();
+            showError(errorMessage);
+            return false;
+        }
+        return true;
+    }
+
+    function showError(message) {
+        const errorDiv = document.getElementById("errorDiv");
+        errorDiv.innerHTML = message;
+        errorDiv.style.display = "block";
+
+        // Scroll to error message
+        errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // File input enhancement
+    document.getElementById("file").addEventListener("change", function() {
+        const fileName = this.value.split("\\").pop();
+        const fileNameDisplay = document.getElementById("file-name");
+
+        if (fileName) {
+            fileNameDisplay.innerHTML = `Selected file: <strong>${fileName}</strong>`;
+        } else {
+            fileNameDisplay.innerHTML = "";
+        }
+    });
+
+    // Form submission
+    document.getElementById("datasetForm").addEventListener("submit", validateForm);
+</script>
 </body>
 </html>

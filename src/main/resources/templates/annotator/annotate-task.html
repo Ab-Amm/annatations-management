@@ -1,112 +1,196 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/annot-main-layout}"
+      lang="en">
 <head>
-    <title>Annotation Task</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .annotation-container {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 20px;
-        }
-        .text-pair {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-        .class-buttons {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .progress-container {
-            margin-bottom: 2rem;
-        }
-    </style>
+    <th:block layout:fragment="title">Annotate Task</th:block>
+
+    <!-- Page specific CSS -->
+    <th:block layout:fragment="pageCss">
+        <style>
+            .annotation-container {
+                max-width: 1200px;
+                margin: 2rem auto;
+            }
+
+            .hover-card .form-check-label {
+                transition: all 0.2s ease;
+                border: 2px solid transparent;
+                cursor: pointer;
+                text-align: center;
+            }
+
+            .hover-card:hover .form-check-label {
+                background-color: var(--primary-very-light);
+                border-color: var(--primary-light);
+            }
+
+            .hover-card:active .form-check-label {
+                background-color: var(--primary-gradient);
+                border-color: var(--primary-color);
+            }
+
+            .form-check-input:checked + .form-check-label {
+                background-color: var(--primary-very-light);
+                border-color: var(--primary-color);
+                color: var(--primary-color);
+                font-weight: 600;
+            }
+
+            .form-check-input {
+                width: 1.2em;
+                height: 1.2em;
+                margin-top: 0.3em;
+            }
+
+            .bg-primary-very-light {
+                background-color: var(--primary-very-light);
+            }
+
+            input[type="radio"] {
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                display: none;
+            }
+        </style>
+    </th:block>
 </head>
-
 <body>
-<a th:href="@{/annotator/tasks}" class="btn btn-success">
-    Return to Task List
-</a>
-<div class="annotation-container" th:object="${task}">
-    <!-- Progress Bar -->
-    <div class="progress-container">
-        <h4>Annotation Progress</h4>
-        <div class="progress">
-            <div class="progress-bar" role="progressbar"
-                 th:style="'width: ' + ${progressPercentage} + '%'"
-                 th:text="${task.couplesDone} + '/' + ${totalCouples}">
+<!-- Content section that will be inserted into the layout's content fragment -->
+<div layout:fragment="content">
+    <div class="annotation-container" th:object="${task}">
+        <!-- Progress Section -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-clipboard-progress"></i> Annotation Progress</h5>
             </div>
-        </div>
-    </div>
-
-    <!-- Navigation Controls -->
-    <div class="navigation-controls">
-        <!-- Previous Button -->
-        <a th:if="${currentIndex > 0}"
-           th:href="@{/annotator/tasks/annotateTask/{taskId}/navigate(taskId=${task.id}, newIndex=${currentIndex - 1})}"
-           class="btn btn-secondary">
-            Previous
-        </a>
-
-        <!-- Next Button -->
-        <a th:if="${currentIndex < totalCouples - 1}"
-           th:href="@{/annotator/tasks/annotateTask/{taskId}/navigate(taskId=${task.id}, newIndex=${currentIndex + 1})}"
-           class="btn btn-secondary">
-            Next
-        </a>
-    </div>
-
-    <!-- Current Text Pair -->
-    <div class="text-pair" th:if="${currentCouple}">
-        <div class="mb-4">
-            <h5>Text 1</h5>
-            <p th:text="${currentCouple.text1}"></p>
-        </div>
-        <div class="mb-4">
-            <h5>Text 2</h5>
-            <p th:text="${currentCouple.text2}"></p>
-        </div>
-
-        <!-- Class Selection Form -->
-        <form th:action="@{/annotator/tasks/annotateTask/{taskId}(taskId=${task.id})}" method="post">
-            <input type="hidden" name="coupleId" th:value="${currentCouple.id}">
-            <input type="hidden" name="currentIndex" th:value="${currentIndex}">
-
-            <!-- Class selection radio buttons -->
-            <div class="class-options">
-                <div th:each="classe : ${task.dataset.classesPossible}">
-                    <div class="form-check">
-                        <label>
-                            <input class="form-check-input"
-                                   type="radio"
-                                   name="selectedClass"
-                                   th:id="${classe.touteClasse}"
-                                   th:value="${classe.touteClasse}"
-                                   th:checked="${currentAnnotation?.chosenClass == classe.touteClasse}" required>
-                        </label>
-                        <label class="form-check-label" th:for="${classe.touteClasse}">
-                            [[${classe.touteClasse}]]
-                        </label>
+            <div class="card-body">
+                <div class="progress" style="height: 24px;">
+                    <div class="progress-bar bg-success"
+                         role="progressbar"
+                         th:style="'width: ' + ${progressPercentage} + '%'"
+                         th:text="${task.couplesDone} + '/' + ${totalCouples}">
                     </div>
                 </div>
             </div>
+        </div>
 
-            <button type="submit" class="btn btn-primary">Validate</button>
-        </form>
-    </div>
+        <!-- Navigation Controls -->
+        <div class="d-flex justify-content-between mb-4">
+            <div>
+                <a th:if="${currentIndex > 0}"
+                   th:href="@{/annotator/tasks/annotateTask/{taskId}/navigate(taskId=${task.id}, newIndex=${currentIndex - 1})}"
+                   class="btn btn-outline-primary">
+                    <i class="bi bi-chevron-left"></i> Previous
+                </a>
+            </div>
 
-    <!-- Completion Message -->
-    <div th:unless="${!task.allCouplesDone}" class="alert alert-success">
-        <h4>Annotation Complete! 🎉</h4>
-        <p>You've finished all text pairs in this task.</p>
-        <a th:href="@{/annotator/tasks}" class="btn btn-success">
-            Return to Task List
-        </a>
+            <a th:href="@{/annotator/tasks}" class="btn btn-outline-secondary">
+                <i class="bi bi-list-task"></i> Task List
+            </a>
+
+            <div>
+                <a th:if="${currentIndex < totalCouples - 1}"
+                   th:href="@{/annotator/tasks/annotateTask/{taskId}/navigate(taskId=${task.id}, newIndex=${currentIndex + 1})}"
+                   class="btn btn-outline-primary">
+                    Next <i class="bi bi-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Text Pair Card -->
+        <div class="card shadow-sm" th:if="${currentCouple}">
+            <div class="card-header bg-primary-very-light text-dark">
+                <h5 class="mb-0"><i class="bi bi-files"></i> Text Pair</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="bg-light p-3 rounded">
+                            <h6 class="text-primary"><i class="bi bi-file-text"></i> Text 1</h6>
+                            <p th:text="${currentCouple.text1}" class="mb-0"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="bg-light p-3 rounded">
+                            <h6 class="text-primary"><i class="bi bi-file-text"></i> Text 2</h6>
+                            <p th:text="${currentCouple.text2}" class="mb-0"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Classification Form -->
+                <form th:action="@{/annotator/tasks/annotateTask/{taskId}(taskId=${task.id})}" method="post" class="mt-4">
+                    <input type="hidden" name="coupleId" th:value="${currentCouple.id}">
+                    <input type="hidden" name="currentIndex" th:value="${currentIndex}">
+
+                    <div class="card shadow-sm mt-4">
+                        <div class="card-header bg-primary-very-light text-dark">
+                            <h5 class="mb-0"><i class="bi bi-tags"></i> Select Classification</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div th:each="classe : ${task.dataset.classesPossible}" class="col-md-4">
+                                    <div class="form-check hover-card">
+                                        <input class="form-check-input"
+                                               type="radio"
+                                               name="selectedClass"
+                                               th:id="${classe.touteClasse}"
+                                               th:value="${classe.touteClasse}"
+                                               th:checked="${currentAnnotation?.chosenClass == classe.touteClasse}"
+                                               required>
+                                        <label class="form-check-label w-100 p-3 rounded" th:for="${classe.touteClasse}">
+                                            <span th:text="${classe.touteClasse}" class="fw-medium"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-success btn-lg px-5">
+                            <i class="bi bi-check-circle"></i> Validate & Continue
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Completion Message -->
+        <div th:if="${task.allCouplesDone}" class="card shadow-sm border-success mt-4">
+            <div class="card-body text-center py-5">
+                <div class="text-success mb-4">
+                    <i class="bi bi-check2-circle display-4"></i>
+                </div>
+                <h3 class="text-success mb-3">Annotation Complete! 🎉</h3>
+                <p class="text-muted">All text pairs in this task have been successfully annotated</p>
+                <a th:href="@{/annotator/tasks}" class="btn btn-outline-success">
+                    <i class="bi bi-arrow-left-circle"></i> Return to Tasks
+                </a>
+            </div>
+        </div>
     </div>
 </div>
+
+<!-- Page specific JavaScript -->
+<th:block layout:fragment="pageScripts">
+    <!-- Task annotation specific scripts would go here -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-focus the first unchecked radio button if none are selected
+            const checkedRadio = document.querySelector('input[name="selectedClass"]:checked');
+            if (!checkedRadio) {
+                const firstRadio = document.querySelector('input[name="selectedClass"]');
+                if (firstRadio) {
+                    firstRadio.focus();
+                }
+            }
+        });
+    </script>
+</th:block>
 </body>
 </html>

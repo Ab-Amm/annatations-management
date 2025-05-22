@@ -1,67 +1,123 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.th3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.th3.org/1999/xhtml" lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dataset Details</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Main Theme Colors */
         :root {
-            --primary-color: #006400;      /* Dark green for primary elements */
-            --primary-light: #008000;      /* Lighter green for hover states */
-            --secondary-color: #4a4a4a;    /* Dark gray for secondary elements */
-            --info-color: #17a2b8;         /* Info blue */
-            --warning-color: #ffc107;      /* Warning yellow */
-            --success-color: #28a745;      /* Success green */
-            --danger-color: #dc3545;       /* Danger red */
+            --primary-color: #00590d;      /* Darker green for primary elements */
+            --primary-light: #007a14;      /* Lighter green for hover states */
+            --primary-very-light: #e8f5e9; /* Very light green for backgrounds */
+            --primary-gradient: linear-gradient(135deg, #00590d, #007a14); /* Gradient for headers */
+            --secondary-color: #3a3f44;    /* Dark gray for secondary elements */
+            --info-color: #0288d1;         /* Info blue */
+            --warning-color: #f9a825;      /* Warning yellow */
+            --success-color: #2e7d32;      /* Success green */
+            --danger-color: #c62828;       /* Danger red */
             --light-bg: #f8f9fa;           /* Light background */
             --card-border: #e0e0e0;        /* Card border color */
             --text-muted: #6c757d;         /* Muted text color */
+            --text-white: #ffffff;         /* White text */
+            --text-dark: #212529;          /* Dark text */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);  /* Small shadow */
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08); /* Medium shadow */
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12); /* Large shadow */
+            --border-radius: 12px;         /* Border radius for cards */
+            --border-radius-sm: 8px;       /* Smaller border radius */
+            --spacing-xs: 0.5rem;          /* Extra small spacing */
+            --spacing-sm: 1rem;            /* Small spacing */
+            --spacing-md: 1.5rem;          /* Medium spacing */
+            --spacing-lg: 2rem;            /* Large spacing */
+            --spacing-xl: 3rem;            /* Extra large spacing */
+            --font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         }
 
         /* General Styling */
         body {
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f5f5f5;
-            color: #333;
-            line-height: 1.6;
+            font-family: var(--font-family);
+            background-color: #f5f7f9;
+            color: var(--text-dark);
+            line-height: 1.7;
+            padding-top: var(--spacing-md);
+            padding-bottom: var(--spacing-xl);
         }
 
         .container {
             max-width: 1200px;
-            padding: 2rem 1rem;
+            padding: var(--spacing-md);
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .page-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: var(--light-bg);
+            color: var(--secondary-color);
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius-sm);
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .back-button:hover {
+            background-color: var(--primary-very-light);
+            color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
         }
 
         /* Card Styling */
         .card {
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--card-border);
-            margin-bottom: 1.5rem;
-            transition: transform 0.2s, box-shadow 0.2s;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            border: none;
+            margin-bottom: var(--spacing-lg);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
         }
 
         .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
         }
 
         /* Card Headers */
         .card-header {
-            padding: 1rem 1.25rem;
+            padding: var(--spacing-md) var(--spacing-lg);
             font-weight: 600;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+            border-bottom: none;
         }
 
         .card-header h2,
         .card-header h5 {
             margin: 0;
             font-weight: 600;
+            letter-spacing: 0.5px;
         }
 
         /* Custom Header Colors */
         .bg-primary {
-            background-color: var(--primary-color) !important;
+            background: var(--primary-gradient) !important;
         }
 
         .bg-secondary {
@@ -82,7 +138,49 @@
 
         /* Card Body */
         .card-body {
-            padding: 1.5rem;
+            padding: var(--spacing-lg);
+            background-color: white;
+        }
+
+        /* Dataset Header Card */
+        .dataset-header-card .card-body {
+            padding-top: var(--spacing-md);
+            padding-bottom: var(--spacing-lg);
+        }
+
+        .dataset-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .stat-item {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .dataset-description {
+            color: var(--text-dark);
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: var(--spacing-md);
+            padding: var(--spacing-md);
+            background-color: var(--primary-very-light);
+            border-radius: var(--border-radius-sm);
+            border-left: 4px solid var(--primary-light);
         }
 
         /* Progress Bars */
@@ -91,70 +189,137 @@
             border-radius: 6px;
             overflow: hidden;
             background-color: #e9ecef;
-            margin: 0.75rem 0;
+            margin: var(--spacing-xs) 0 var(--spacing-sm);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .progress-bar {
-            transition: width 0.6s ease;
+            transition: width 0.8s ease;
             border-radius: 6px;
+            background-image: linear-gradient(45deg, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
+            background-size: 1rem 1rem;
+            animation: progress-bar-stripes 1s linear infinite;
+        }
+
+        @keyframes progress-bar-stripes {
+            from { background-position: 1rem 0; }
+            to { background-position: 0 0; }
         }
 
         .progress-bar.bg-success {
             background-color: var(--success-color) !important;
         }
 
-        /* Annotator Cards */
-        .card .card {
-            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.08);
+        /* Classes Section */
+        .classes-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
         }
 
-        /* Badges */
-        .badge {
+        .class-badge {
+            background-color: var(--primary-very-light);
+            color: var(--primary-color);
+            border: 1px solid rgba(0, 89, 13, 0.2);
+            border-radius: 30px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
             font-weight: 500;
-            padding: 0.5em 0.8em;
-            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.2s ease;
         }
 
-        .badge.bg-info {
-            background-color: rgba(23, 162, 184, 0.85) !important;
-            color: #fff !important;
+        .class-badge:hover {
+            background-color: var(--primary-light);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
         }
 
-        .badge.bg-success {
-            background-color: var(--success-color) !important;
-        }
-
-        .badge.bg-secondary {
-            background-color: var(--secondary-color) !important;
+        .class-badge i {
+            margin-right: 0.5rem;
+            font-size: 0.8rem;
         }
 
         /* Text Pairs Section */
-        .list-group-item {
-            padding: 1rem;
-            border: 1px solid rgba(0, 0, 0, 0.125);
-            margin-bottom: 0.5rem;
-            border-radius: 6px;
-            transition: background-color 0.2s;
+        .text-pairs-container {
+            margin-bottom: var(--spacing-md);
         }
 
-        .list-group-item:hover {
-            background-color: #f8f9fa;
+        .text-pair-item {
+            background-color: white;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--card-border);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-sm);
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
         }
 
-        .list-group-item strong {
+        .text-pair-item:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-light);
+        }
+
+        .text-content {
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .text-label {
             color: var(--primary-color);
             font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        .text-value {
+            font-size: 0.95rem;
+        }
+
+        .text-status {
+            margin-top: var(--spacing-sm);
+            display: flex;
+            align-items: center;
+        }
+
+        /* Status Badges */
+        .badge {
+            font-weight: 500;
+            padding: 0.5em 1em;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .badge i {
+            margin-right: 0.4rem;
+        }
+
+        .badge.bg-success {
+            background-color: rgba(46, 125, 50, 0.15) !important;
+            color: var(--success-color) !important;
+            border: 1px solid rgba(46, 125, 50, 0.3);
+        }
+
+        .badge.bg-secondary {
+            background-color: rgba(58, 63, 68, 0.15) !important;
+            color: var(--secondary-color) !important;
+            border: 1px solid rgba(58, 63, 68, 0.3);
         }
 
         /* Pagination */
         .pagination {
-            margin-top: 1.5rem;
+            margin-top: var(--spacing-lg);
         }
 
         .page-link {
             color: var(--primary-color);
             border: 1px solid #dee2e6;
             padding: 0.5rem 0.75rem;
+            margin: 0 0.25rem;
+            border-radius: var(--border-radius-sm);
+            transition: all 0.2s ease;
         }
 
         .page-item.active .page-link {
@@ -164,28 +329,112 @@
 
         .page-link:hover {
             color: var(--primary-light);
-            background-color: #e9ecef;
+            background-color: var(--primary-very-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
         }
 
         .page-item.disabled .page-link {
             color: var(--text-muted);
+            pointer-events: none;
+            background-color: #f8f9fa;
         }
 
-        /* Description Text */
-        .text-muted {
-            color: var(--text-muted) !important;
-            font-size: 0.95rem;
+        /* Annotators Section */
+        .annotators-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-md);
         }
 
-        /* Classes Section */
-        .d-flex.flex-wrap.gap-2 .badge {
-            margin-right: 0.5rem;
+        .annotator-card {
+            background-color: white;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--card-border);
+            padding: var(--spacing-md);
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .annotator-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-light);
+            transform: translateY(-3px);
+        }
+
+        .annotator-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
             margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .annotator-name i {
+            margin-right: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .annotator-deadline {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .annotator-deadline i {
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .annotator-progress {
+            margin-top: var(--spacing-sm);
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.25rem;
             font-size: 0.85rem;
         }
 
+        .progress-text {
+            color: var(--text-muted);
+        }
+
+        .progress-percentage {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
         /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            .container {
+                padding: var(--spacing-sm);
+            }
+
+            .card-header {
+                padding: var(--spacing-sm) var(--spacing-md);
+            }
+
+            .card-body {
+                padding: var(--spacing-md);
+            }
+
+            .dataset-stats {
+                gap: var(--spacing-md);
+            }
+        }
+
         @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--spacing-sm);
+            }
+
             .card-header h2 {
                 font-size: 1.5rem;
             }
@@ -194,54 +443,105 @@
                 font-size: 1.1rem;
             }
 
-            .col-md-4, .col-md-6, .col-md-8 {
-                margin-bottom: 1rem;
+            .dataset-stats {
+                flex-direction: column;
+                gap: var(--spacing-sm);
+            }
+
+            .annotators-container {
+                grid-template-columns: 1fr;
             }
         }
 
-        /* Custom Animations */
+        /* Animations */
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .card {
             animation: fadeIn 0.5s ease-in-out;
         }
 
-        /* Header Stats */
-        .mb-1 strong {
-            color: var(--primary-color);
+        .text-pair-item {
+            animation: fadeIn 0.5s ease-in-out;
+            animation-fill-mode: both;
         }
 
-        /* Deadline Formatting */
-        p.mb-1 {
-            font-size: 0.9rem;
+        .text-pair-item:nth-child(1) { animation-delay: 0.1s; }
+        .text-pair-item:nth-child(2) { animation-delay: 0.2s; }
+        .text-pair-item:nth-child(3) { animation-delay: 0.3s; }
+        .text-pair-item:nth-child(4) { animation-delay: 0.4s; }
+        .text-pair-item:nth-child(5) { animation-delay: 0.5s; }
+
+        .annotator-card {
+            animation: fadeIn 0.5s ease-in-out;
+            animation-fill-mode: both;
         }
+
+        .annotator-card:nth-child(1) { animation-delay: 0.1s; }
+        .annotator-card:nth-child(2) { animation-delay: 0.2s; }
+        .annotator-card:nth-child(3) { animation-delay: 0.3s; }
+
+        .annotator-card.done {
+            background-color: #d4edda; /* light green */
+            border: 1px solid #c3e6cb;
+        }
+
+        .annotator-card.pending {
+            background-color: #fff3cd; /* light yellow */
+            border: 1px solid #ffeeba;
+        }
+
+        .task-status {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .text-status .badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+
     </style>
 </head>
-<body class="bg-light">
-<div class="container py-5">
+<body>
+<div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title">Dataset Details</h1>
+        <a href="/admin/datasets" class="back-button">
+            <i class="fas fa-arrow-left"></i> Back to Datasets
+        </a>
+    </div>
+
     <!-- Header Section -->
-    <div class="card mb-4">
+    <div class="card dataset-header-card mb-4">
         <div class="card-header bg-primary text-white">
             <h2 th:text="${dataset.name}">Dataset Name</h2>
         </div>
         <div class="card-body">
-            <div class="row">
-                <div class="col-md-4">
-                    <p class="mb-1"><strong>Total Text Pairs:</strong>
-                        <span th:text="${#numbers.formatInteger(totalCouples, 1, 'COMMA')}">0</span>
-                    </p>
-                    <p class="mb-1"><strong>Completion:</strong>
-                        <span th:text="${completionPercentage} + '%'">0%</span>
-                    </p>
+            <div class="dataset-stats">
+                <div class="stat-item">
+                    <div class="stat-label">Total Text Pairs</div>
+                    <div class="stat-value" th:text="${#numbers.formatInteger(totalCouples, 1, 'COMMA')}">0</div>
                 </div>
-                <div class="col-md-8">
-                    <p th:text="${dataset.description}" class="text-muted">Description</p>
+                <div class="stat-item">
+                    <div class="stat-label">Completion</div>
+                    <div class="stat-value" th:text="${completionPercentage} + '%'">0%</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Annotators</div>
+                    <div class="stat-value" th:text="${#lists.size(dataset.tasks)}">0</div>
                 </div>
             </div>
-            <div class="progress mt-2">
+
+            <p class="dataset-description" th:text="${dataset.description}">
+                This dataset contains text pairs for sentiment analysis. Each pair consists of two related texts that need to be classified according to their emotional tone.
+            </p>
+
+            <div class="progress">
                 <div class="progress-bar bg-success"
                      role="progressbar"
                      th:style="'width: ' + ${completionPercentage} + '%'"
@@ -256,14 +556,14 @@
     <!-- Classes Section -->
     <div class="card mb-4">
         <div class="card-header bg-secondary text-white">
-            <h5>Classes</h5>
+            <h5><i class="fas fa-tags"></i> Classification Categories</h5>
         </div>
         <div class="card-body">
-            <div class="d-flex flex-wrap gap-2">
+            <div class="classes-container">
                 <span th:each="classe : ${dataset.classesPossible}"
-                      class="badge bg-info text-dark"
+                      class="class-badge"
                       th:text="${classe.touteClasse}">
-                    Class
+                    <i class="fas fa-tag"></i> Class
                 </span>
             </div>
         </div>
@@ -272,30 +572,43 @@
     <!-- Text Pairs Section -->
     <div class="card mb-4">
         <div class="card-header bg-warning text-dark">
-            <h5>Text Pairs <small>(Showing <span th:text="${currentPage * 100}"></span>-<span
-                    th:text="${(currentPage + 1) * 100 > totalCouples ? totalCouples : (currentPage + 1) * 100}"></span>
-                of <span th:text="${totalCouples}"></span>)</small></h5>
+            <h5><i class="fas fa-file-alt"></i> Text Pairs
+                <small>(Showing <span th:text="${currentPage * 100 + 1}"></span>-<span
+                        th:text="${(currentPage + 1) * 100 > totalCouples ? totalCouples : (currentPage + 1) * 100}"></span>
+                    of <span th:text="${totalCouples}"></span>)</small>
+            </h5>
         </div>
         <div class="card-body">
-            <div class="list-group mb-3">
-                <div th:each="couple : ${couplesPage}"
-                     class="list-group-item">
+            <div class="text-pairs-container">
+                <div th:each="couple : ${couplesPage}" class="text-pair-item">
                     <div class="row">
                         <div class="col-md-6">
-                            <strong>Text 1:</strong>
-                            <span th:text="${couple.text1}"></span>
+                            <div class="text-content">
+                                <span class="text-label">Text 1:</span>
+                                <span class="text-value" th:text="${couple.text1}"></span>
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <strong>Text 2:</strong>
-                            <span th:text="${couple.text2}"></span>
+                            <div class="text-content">
+                                <span class="text-label">Text 2:</span>
+                                <span class="text-value" th:text="${couple.text2}"></span>
+                            </div>
                         </div>
                     </div>
-                    <div class="mt-2">
-                        <span th:if="${couple.done}" class="badge bg-success">Annotated</span>
-                        <span th:unless="${couple.done}" class="badge bg-secondary">Pending</span>
+                    <div class="text-status">
+                <span th:if="${couple.done}" class="badge bg-success">
+                    <i class="fas fa-check-circle"></i> Annotated
+                    <span th:if="${couple.annotation != null}" class="ms-2">
+                        [[${couple.annotation.chosenClass}]]
+                    </span>
+                </span>
+                        <span th:unless="${couple.done}" class="badge bg-secondary">
+                    <i class="fas fa-clock"></i> Pending
+                </span>
                     </div>
                 </div>
             </div>
+        </div>
 
             <!-- Pagination -->
             <nav aria-label="Page navigation">
@@ -303,7 +616,7 @@
                     <li class="page-item" th:class="${currentPage == 0} ? 'disabled'">
                         <a class="page-link"
                            th:href="@{/admin/datasets/details/{id}(id=${dataset.id}, page=${currentPage - 1})}">
-                            Previous
+                            <i class="fas fa-chevron-left"></i> Previous
                         </a>
                     </li>
                     <li class="page-item active">
@@ -313,7 +626,7 @@
                         th:class="${(currentPage + 1) * 100 >= totalCouples} ? 'disabled'">
                         <a class="page-link"
                            th:href="@{/admin/datasets/details/{id}(id=${dataset.id}, page=${currentPage + 1})}">
-                            Next
+                            Next <i class="fas fa-chevron-right"></i>
                         </a>
                     </li>
                 </ul>
@@ -324,33 +637,54 @@
     <!-- Annotators Section -->
     <div class="card">
         <div class="card-header bg-info text-white">
-            <h5>Assigned Annotators</h5>
+            <h5><i class="fas fa-users"></i> Assigned Annotators</h5>
         </div>
         <div class="card-body">
-            <div class="row">
+            <div class="annotators-container">
                 <div th:each="task : ${dataset.tasks}"
-                     class="col-md-4 mb-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h6 th:text="${task.annotator.firstName + ' ' + task.annotator.lastName}">
-                                Annotator Name
-                            </h6>
-                            <p class="mb-1">Deadline:
-                                <span th:text="${#temporals.format(task.deadline, 'dd MMM yyyy')}"></span>
-                            </p>
-                            <div class="progress" style="height: 20px;">
-                                <div class="progress-bar"
-                                     role="progressbar"
-                                     th:style="'width: ' + ${task.couplesDone} + '%'"
-                                     th:text="${task.couplesDone} + '%'">
-                                </div>
+                     th:class="'annotator-card ' + (task.allCouplesDone ? 'done' : 'pending')">
+
+                    <div class="annotator-name">
+                        <i class="fas fa-user"></i>
+                        <span th:text="${task.annotator.firstName + ' ' + task.annotator.lastName}">
+            Annotator Name
+        </span>
+                    </div>
+
+                    <div class="annotator-deadline">
+                        <i class="fas fa-calendar-alt"></i>
+                        Deadline: <span th:text="${#temporals.format(task.deadline, 'dd MMM yyyy')}"></span>
+                    </div>
+
+                    <div class="annotator-progress">
+                        <div class="progress-label">
+                            <span class="progress-text">Progress</span>
+                            <span class="progress-percentage"
+                                  th:text="${#numbers.formatDecimal(task.couplesDone * 100 / task.coupleTexts.size(), 1, 2)} + '%'">
+            </span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar"
+                                 role="progressbar"
+                                 th:style="'width: ' + ${task.couplesDone * 100 / task.coupleTexts.size()} + '%'"
+                                 th:text="${#numbers.formatDecimal(task.couplesDone * 100 / task.coupleTexts.size(), 1, 2)} + '%'">
+                                75%
                             </div>
                         </div>
                     </div>
+
+                    <!-- Status Label -->
+                    <div class="task-status">
+                        <span th:text="${task.allCouplesDone ? '✔ Done' : '⏳ Pending'}"></span>
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </body>
 </html>

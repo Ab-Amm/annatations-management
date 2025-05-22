@@ -42,8 +42,8 @@ public class CoupleText {
     @JoinColumn(name = "task_id")
     private Task task;
 
-    @OneToMany(mappedBy = "coupleText")
-    private List<Annotation> annotations = new ArrayList<>();
+    @OneToOne(mappedBy = "coupleText", cascade = CascadeType.ALL)
+    private Annotation annotation;
 
 
 }

@@ -2,6 +2,7 @@ package org.example.annot.service;
 
 
 import org.example.annot.model.Annotation;
+import org.example.annot.model.Annotator;
 import org.example.annot.model.CoupleText;
 import org.example.annot.repository.AnnotationRepository;
 import org.example.annot.repository.CoupleTextRepository;
@@ -23,8 +24,8 @@ public class AnnotationService {
     }
 
 
-    public Annotation getAnnotationForCoupleAndAnnotator(Long coupleTextId, Long annotatorId) {
-        return annotationRepository.findByCoupleTextIdAndAnnotatorId(coupleTextId, annotatorId)
+    public Annotation getAnnotationForCouple(Long coupleTextId) {
+        return annotationRepository.findByCoupleTextId(coupleTextId)
                 .orElse(null);
     }
 
@@ -42,6 +43,20 @@ public class AnnotationService {
             }
         }
         return -1;
+    }
+
+    public Annotation createAnnotation(CoupleText coupleText, Annotator annotator, String chosenClass) {
+        if (coupleText.getAnnotation() != null) {
+            throw new IllegalStateException("This couple text is already annotated");
+        }
+
+        Annotation annotation = new Annotation();
+        annotation.setChosenClass(chosenClass);
+        annotation.setCoupleText(coupleText);
+
+        coupleText.setAnnotation(annotation);
+
+        return annotationRepository.save(annotation);
     }
 
 

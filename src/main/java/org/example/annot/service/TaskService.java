@@ -44,7 +44,7 @@ public class TaskService {
 
 
             Task task = new Task();
-            dataset.setAnnotated(true);
+            dataset.setAssigned(true);
             task.setDataset(dataset);
             task.setAnnotator(annotators.get(i));
             task.setDeadline(deadline);
