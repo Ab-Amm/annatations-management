@@ -28,7 +28,7 @@ public class Task {
     @Column(nullable = false)
     private boolean allCouplesDone = false;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Annotator annotator;
 
     @ManyToOne

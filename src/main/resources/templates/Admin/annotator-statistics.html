@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Annotator Statistics</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Variables */
+        :root {
+            --primary-color: #006400;
+            --primary-light: #007a14;
+            --primary-very-light: #e8f5e9;
+            --secondary-color: #3a3f44;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --success-color: #28a745;
+            --info-color: #17a2b8;
+            --warning-color: #ffc107;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+            --border-radius-sm: 8px;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+        }
+
+        /* Base Styles */
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding-top: var(--spacing-md);
+            padding-bottom: var(--spacing-xl);
+        }
+
+        .container {
+            max-width: 1400px;
+            padding: var(--spacing-md);
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            color: white;
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(50%, -50%);
+        }
+
+        .page-title {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-title i {
+            font-size: 2.5rem;
+        }
+
+        .breadcrumb-nav {
+            margin-top: var(--spacing-sm);
+            position: relative;
+            z-index: 1;
+        }
+
+        .breadcrumb-nav a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .breadcrumb-nav a:hover {
+            color: white;
+        }
+
+        /* Summary Cards */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-color);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .stat-card-title {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-very-light);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0;
+            line-height: 1;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .stat-change.positive {
+            color: var(--success-color);
+        }
+
+        .stat-change.negative {
+            color: #dc3545;
+        }
+
+        /* Chart Card */
+        .chart-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            margin-bottom: var(--spacing-lg);
+            overflow: hidden;
+        }
+
+        .chart-header {
+            background: var(--primary-very-light);
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .chart-title {
+            margin: 0;
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .chart-body {
+            padding: var(--spacing-lg);
+        }
+
+        #activityChart {
+            max-height: 350px !important;
+            width: 100% !important;
+        }
+
+        /* Progress Section */
+        .progress-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .progress-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+
+        .progress-header {
+            background: var(--primary-color);
+            color: white;
+            padding: var(--spacing-md) var(--spacing-lg);
+        }
+
+        .progress-title {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .progress-body {
+            padding: var(--spacing-lg);
+        }
+
+        /* Task Progress Items */
+        .task-item {
+            margin-bottom: var(--spacing-md);
+            padding: var(--spacing-sm);
+            background: #f8f9fa;
+            border-radius: var(--border-radius-sm);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .task-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .task-name {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .task-progress {
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .task-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* Recent Annotations Table */
+        .annotations-table {
+            background: white;
+            border-radius: var(--border-radius-sm);
+            overflow: hidden;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead {
+            background: var(--primary-very-light);
+        }
+
+        .table thead th {
+            color: var(--primary-color);
+            font-weight: 600;
+            border-bottom: 2px solid var(--primary-color);
+            padding: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .table tbody tr:hover {
+            background-color: var(--primary-very-light);
+        }
+
+        .table tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .annotation-text {
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .class-badge {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .time-badge {
+            background: #6c757d;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+        }
+
+        /* Navigation Buttons */
+        .nav-buttons {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .btn-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: white;
+            color: var(--secondary-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            padding: 0.75rem 1.25rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-nav:hover {
+            background: var(--primary-very-light);
+            color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-nav.btn-primary {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .btn-nav.btn-primary:hover {
+            background: var(--primary-light);
+            color: white;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-xl);
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: var(--spacing-md);
+            opacity: 0.5;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .summary-cards {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: var(--spacing-sm);
+            }
+
+            .progress-section {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-md);
+            }
+
+            .nav-buttons {
+                flex-wrap: wrap;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .stat-value {
+                font-size: 2rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card, .chart-card, .progress-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div th:if="${error}" class="error-message">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <span th:text="${error}">An error occurred while loading statistics.</span>
+    </div>
+    <!-- Navigation -->
+    <div class="nav-buttons">
+        <a th:href="@{/admin/annotators}" class="btn-nav">
+            <i class="fas fa-arrow-left"></i> Back to Annotators
+        </a>
+        <a th:href="@{/admin/datasets}" class="btn-nav">
+            <i class="fas fa-database"></i> Datasets
+        </a>
+        <a th:href="@{/}" class="btn-nav">
+            <i class="fas fa-home"></i> Home
+        </a>
+        <a href="#" class="btn-nav btn-primary">
+            <i class="fas fa-download"></i> Export Report
+        </a>
+    </div>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="fas fa-user-chart"></i>
+            Annotator Statistics: <span th:text="${annotator.username}">John Doe</span>
+        </h1>
+        <div class="breadcrumb-nav">
+            <a th:href="@{/}">Home</a> /
+            <a th:href="@{/admin/annotators}">Annotators</a> /
+            <span th:text="${annotator.username}">Statistics</span>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <h5 class="stat-card-title">
+                    <i class="fas fa-file-alt"></i> Total Annotations
+                </h5>
+                <div class="stat-card-icon">
+                    <i class="fas fa-edit"></i>
+                </div>
+            </div>
+            <p class="stat-value" th:text="${stats.totalAnnotations}">1,247</p>
+            <div class="stat-change positive">
+                <i class="fas fa-arrow-up"></i> +12% this week
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <h5 class="stat-card-title">
+                    <i class="fas fa-tasks"></i> Active Tasks
+                </h5>
+                <div class="stat-card-icon">
+                    <i class="fas fa-list-check"></i>
+                </div>
+            </div>
+            <p class="stat-value" th:text="${stats.totalTasks}">8</p>
+            <div class="stat-change positive">
+                <i class="fas fa-arrow-up"></i> 2 new tasks
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <h5 class="stat-card-title">
+                    <i class="fas fa-clock"></i> Avg. Time
+                </h5>
+                <div class="stat-card-icon">
+                    <i class="fas fa-stopwatch"></i>
+                </div>
+            </div>
+            <p class="stat-value" th:text="${stats.averageTimeSpent}">2.3m</p>
+            <div class="stat-change negative">
+                <i class="fas fa-arrow-down"></i> -5% faster
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <h5 class="stat-card-title">
+                    <i class="fas fa-check-circle"></i> Completion Rate
+                </h5>
+                <div class="stat-card-icon">
+                    <i class="fas fa-percentage"></i>
+                </div>
+            </div>
+            <p class="stat-value" th:text="${#numbers.formatDecimal(stats.completionRate, 1, 1)} + '%'">94.2%</p>
+            <div class="stat-change positive">
+                <i class="fas fa-arrow-up"></i> +2.1% improvement
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Chart -->
+    <div class="chart-card">
+        <div class="chart-header">
+            <h3 class="chart-title">
+                <i class="fas fa-chart-line"></i> Annotation Activity Over Time
+            </h3>
+        </div>
+        <div class="chart-body">
+            <canvas id="activityChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Task Progress and Recent Annotations -->
+    <div class="progress-section">
+        <!-- Task Progress -->
+        <div class="progress-card">
+            <div class="progress-header">
+                <h3 class="progress-title">
+                    <i class="fas fa-tasks"></i> Task Progress
+                </h3>
+            </div>
+            <div class="progress-body">
+                <div th:each="task : ${stats.tasks}" class="task-item">
+                    <div class="task-name">
+                        <span th:text="${task.dataset}">Dataset Name</span>
+                        <span class="badge bg-primary" th:text="${task.progress} + '%'">75%</span>
+                    </div>
+                    <div class="task-progress">
+                        <div class="task-progress-bar"
+                             th:style="'width:' + ${task.progress} + '%'"></div>
+                    </div>
+                </div>
+
+                <!-- Sample data for demonstration -->
+                <div class="task-item" th:remove="all">
+                    <div class="task-name">
+                        <span>Sentiment Analysis Dataset</span>
+                        <span class="badge bg-primary">85%</span>
+                    </div>
+                    <div class="task-progress">
+                        <div class="task-progress-bar" style="width: 85%"></div>
+                    </div>
+                </div>
+
+                <div class="task-item" th:remove="all">
+                    <div class="task-name">
+                        <span>Product Reviews Classification</span>
+                        <span class="badge bg-primary">62%</span>
+                    </div>
+                    <div class="task-progress">
+                        <div class="task-progress-bar" style="width: 62%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Annotations -->
+        <div class="progress-card">
+            <div class="progress-header">
+                <h3 class="progress-title">
+                    <i class="fas fa-history"></i> Recent Annotations
+                </h3>
+            </div>
+            <div class="progress-body">
+                <div class="annotations-table">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Text</th>
+                            <th>Class</th>
+                            <th>Time</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="annotation : ${stats.recentAnnotations}">
+                            <td>
+                                <span class="annotation-text" th:text="${#strings.abbreviate(annotation.text, 25)}">Sample text...</span>
+                            </td>
+                            <td>
+                                <span class="class-badge" th:text="${annotation.chosenClass}">Positive</span>
+                            </td>
+                            <td>
+                                <span class="time-badge" th:text="${#dates.format(annotation.annotationDate, 'dd/MM HH:mm')}">15/01 14:30</span>
+                            </td>
+                        </tr>
+
+                        <!-- Sample data for demonstration -->
+                        <tr th:remove="all">
+                            <td><span class="annotation-text">This product is amazing...</span></td>
+                            <td><span class="class-badge">Positive</span></td>
+                            <td><span class="time-badge">15/01 14:30</span></td>
+                        </tr>
+                        <tr th:remove="all">
+                            <td><span class="annotation-text">Not satisfied with...</span></td>
+                            <td><span class="class-badge">Negative</span></td>
+                            <td><span class="time-badge">15/01 14:25</span></td>
+                        </tr>
+                        <tr th:remove="all">
+                            <td><span class="annotation-text">Average quality product</span></td>
+                            <td><span class="class-badge">Neutral</span></td>
+                            <td><span class="time-badge">15/01 14:20</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div th:if="${#lists.isEmpty(stats.recentAnnotations)}" class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <p>No recent annotations found</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden data elements for chart -->
+<div style="display: none;">
+    <span id="chartLabels" th:text="${stats.dailyActivity != null ? #strings.listJoin(stats.dailyActivity.keySet(), ',') : 'Mon,Tue,Wed,Thu,Fri,Sat,Sun'}"></span>
+    <span id="chartData" th:text="${stats.dailyActivity != null ? #strings.listJoin(stats.dailyActivity.values(), ',') : '12,19,8,15,22,18,25'}"></span>
+</div>
+
+<script>
+    // Activity Chart initialization
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('activityChart').getContext('2d');
+
+        // Get data from hidden elements
+        const labelsElement = document.getElementById('chartLabels');
+        const dataElement = document.getElementById('chartData');
+
+        const labels = labelsElement ? labelsElement.textContent.split(',') : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const data = dataElement ? dataElement.textContent.split(',').map(Number) : [12, 19, 8, 15, 22, 18, 25];
+
+        // Chart.js configuration with Thymeleaf green theme
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Annotations per Day',
+                    data: data,
+                    borderColor: '#006400',
+                    backgroundColor: 'rgba(0, 100, 0, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#006400',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            color: '#333333',
+                            font: {
+                                size: 14,
+                                weight: '500'
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        },
+                        ticks: {
+                            color: '#6c757d',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        },
+                        ticks: {
+                            stepSize: 1,
+                            color: '#6c757d',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                }
+            }
+        });
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

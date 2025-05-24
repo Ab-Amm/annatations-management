@@ -1,6 +1,7 @@
 package org.example.annot.controller;
 
 
+import jakarta.servlet.http.HttpSession;
 import org.example.annot.model.*;
 import org.example.annot.repository.*;
 import org.example.annot.service.AnnotationService;
@@ -14,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -62,7 +64,8 @@ public class AnnotatorTaskController {
     public String getAnnotationPage(
             @PathVariable Long taskId,
             @RequestParam(defaultValue = "0") int currentIndex,
-            Model model) {
+            Model model,
+            HttpSession session) {
 
         Task task = taskService.getTaskWithCouples(taskId);
         List<CoupleText> couples = task.getCoupleTexts();
@@ -93,6 +96,11 @@ public class AnnotatorTaskController {
         model.addAttribute("prevUnannotatedIndex",
                 taskService.findPrevUnannotatedIndex(taskId, currentIndex));
 
+
+        Long coupleId = currentCouple.getId();
+        session.setAttribute("startTime_" + coupleId, System.currentTimeMillis());
+
+
         return "annotator/annotate-task";
     }
 
@@ -100,7 +108,8 @@ public class AnnotatorTaskController {
     public String navigateUnannotated(
             @PathVariable Long taskId,
             @RequestParam int currentIndex,
-            @RequestParam String direction) {
+            @RequestParam String direction,
+            HttpSession session) {
 
         Integer newIndex = "next".equalsIgnoreCase(direction)
                 ? taskService.findNextUnannotatedIndex(taskId, currentIndex)
@@ -110,6 +119,13 @@ public class AnnotatorTaskController {
             newIndex = currentIndex; // Stay on current if none found
         }
 
+        Task task = taskService.getTaskWithCouples(taskId);
+        List<CoupleText> couples = task.getCoupleTexts();
+
+        CoupleText currentCouple = couples.get(newIndex);
+        Long coupleId = currentCouple.getId();
+        session.setAttribute("startTime_" + coupleId, System.currentTimeMillis());
+
         return "redirect:/annotator/tasks/annotateTask/" + taskId + "?currentIndex=" + newIndex;
     }
 
@@ -117,6 +133,7 @@ public class AnnotatorTaskController {
 
     @PostMapping("/annotateTask/{taskId}")
     public String handleAnnotation(
+            HttpSession session,
             @PathVariable Long taskId,
             @RequestParam Long coupleId,
             @RequestParam String selectedClass,
@@ -124,8 +141,14 @@ public class AnnotatorTaskController {
 
         CoupleText coupleText = taskService.getCoupleText(coupleId);
         if (!coupleText.isDone()) {
+            long startTime = (Long) session.getAttribute("startTime_" + coupleId);
+            long durationMillis = System.currentTimeMillis() - startTime;
+
+
             Annotation annotation = annotationRepository.findByCoupleTextId(coupleId)
                     .orElse(new Annotation());
+            Duration duration = Duration.ofMillis(durationMillis);
+            annotation.setTimeSpent(duration);
             coupleText.setDone(true);
             coupleTextRepository.save(coupleText);
             annotation.setCoupleText(coupleText);
@@ -157,6 +180,7 @@ public class AnnotatorTaskController {
             datasetService.saveDataset(dataset);
         }
         currentIndex++;
+
 
         return "redirect:/annotator/tasks/annotateTask/" + taskId + "?currentIndex=" + currentIndex;
     }

@@ -105,5 +105,15 @@ public class TaskService {
     }
 
 
+    public List<Task> getCompletedTasks() {
+        return taskRepository.findAllByAllCouplesDoneTrue();
+    }
+
+    public List<Task> getAllTasks() {
+        return taskRepository.findAll();
+    }
+
+
 }
+
 

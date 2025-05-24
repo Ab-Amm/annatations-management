@@ -1,13 +1,13 @@
 package org.example.annot.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.example.annot.model.*;
-import org.example.annot.repository.AnnotatorRepository;
-import org.example.annot.repository.ClassePossibleRepository;
-import org.example.annot.repository.CoupleTextRepository;
-import org.example.annot.repository.DatasetRepository;
+import org.example.annot.repository.*;
+import org.example.annot.service.AnnotationService;
+import org.example.annot.service.AnnotatorStatsService;
 import org.example.annot.service.DatasetService;
 import org.example.annot.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +26,18 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin/datasets")
-public class DatasetController {
+public class AdminDatasetController {
 
     @Autowired
     private DatasetRepository datasetRepository;
+
+    @Autowired
+    private AnnotatorStatsService statsService;
 
     @Autowired
     private ClassePossibleRepository classePossibleRepository;
@@ -51,6 +53,9 @@ public class DatasetController {
 
     @Autowired
     private DatasetService datasetService;
+
+    @Autowired
+    private AnnotationService annotationService;
 
     @GetMapping
     public String showDatasets(Model model) {
@@ -236,6 +241,37 @@ public class DatasetController {
                 );
             }
         }
+    }
+
+    @GetMapping("/annotators/stats")
+    public String listAnnotatorStats(Model model) {
+        Map<Long, BasicStats> stats = statsService.getBasicStatsForAll();
+        List<Annotator> annotators = annotatorRepository.findAll();
+
+        model.addAttribute("annotators", annotators);
+        model.addAttribute("statsMap", stats);
+        List<Task> completedTasks = taskService.getCompletedTasks();
+
+        model.addAttribute("completedTasks", completedTasks);
+        Long averageTimeSpent = statsService.getAverageTimeSpent();
+        model.addAttribute("averageTimeSpent", averageTimeSpent);
+
+        long annotationsCount = annotationService.getAnnotationsCount();
+        model.addAttribute("annotationsCount", annotationsCount);
+
+        return "Admin/annotator-stats-list";
+    }
+
+    @GetMapping("/annotators/{id}/stats")
+    public String getAnnotatorStats(@PathVariable Long id, Model model) {
+        Annotator annotator = annotatorRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Annotator not found"));
+
+        AnnotatorStats stats = statsService.getAnnotatorStats(id);
+
+        model.addAttribute("annotator", annotator);
+        model.addAttribute("stats", stats);
+        return "Admin/annotator-statistics";
     }
 }
 

@@ -26,5 +26,14 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     @Query("SELECT t FROM Task t WHERE t.id = :taskId")
     Task findTaskWithCoupleTexts(@Param("taskId") Long taskId);
+
+    @Query("SELECT COUNT(t) FROM Task t " +
+            "WHERE t.annotator.id = :annotatorId AND t.allCouplesDone = true")
+    Long countCompletedTasksByAnnotatorId(Long annotatorId);
+
+    List<Task> findAllByAllCouplesDoneTrue();
+
+
+
 }
 

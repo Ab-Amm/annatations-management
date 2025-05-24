@@ -62,7 +62,13 @@ public class AnnotationService {
 
     public void updateAnnotation(Long id, String chosenClass) {
         Annotation annotation = annotationRepository.findById(id).orElse(null);
-        annotation.setChosenClass(chosenClass);
-        annotationRepository.save(annotation);
+        if (annotation != null) {
+            annotation.setChosenClass(chosenClass);
+            annotationRepository.save(annotation);
+        }
+    }
+
+    public long getAnnotationsCount() {
+        return annotationRepository.count();
     }
 }

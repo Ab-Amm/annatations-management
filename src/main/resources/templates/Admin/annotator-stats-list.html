@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Annotator Statistics</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            --primary-color: #006400;
+            --primary-light: #007a14;
+            --primary-very-light: #e8f5e9;
+            --secondary-color: #3a3f44;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --success-color: #28a745;
+            --info-color: #17a2b8;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-radius: 8px;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+        }
+
+        /* Base Styles */
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: var(--text-color);
+            line-height: 1.6;
+            padding-top: var(--spacing-md);
+            padding-bottom: var(--spacing-lg);
+        }
+
+        .container {
+            max-width: 1200px;
+            padding: var(--spacing-md);
+        }
+
+        /* Error Message */
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius);
+            border: 1px solid #f5c6cb;
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-sm);
+            border-bottom: 2px solid var(--primary-very-light);
+        }
+
+        .page-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .page-title i {
+            font-size: 1.5rem;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .btn-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: white;
+            color: var(--secondary-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-nav:hover {
+            background-color: var(--primary-very-light);
+            color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Statistics Cards */
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: var(--spacing-md);
+            box-shadow: var(--shadow-md);
+            text-align: center;
+            transition: transform 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .stat-error {
+            color: #dc3545;
+            font-size: 0.9rem;
+        }
+
+        /* Table Card */
+        .table-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .table-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: var(--spacing-md) var(--spacing-lg);
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .table-title {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        /* Table Styling */
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead {
+            background-color: var(--primary-very-light);
+        }
+
+        .table thead th {
+            color: var(--primary-color);
+            font-weight: 600;
+            border-bottom: 2px solid var(--primary-light);
+            padding: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .table tbody tr:hover {
+            background-color: var(--primary-very-light);
+        }
+
+        .table tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* Metric Badges */
+        .metric-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .metric-high {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+        }
+
+        .metric-medium {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: #856404;
+        }
+
+        .metric-low {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #721c24;
+        }
+
+        .metric-error {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #721c24;
+        }
+
+        /* Action Button */
+        .btn-details {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-details:hover {
+            background-color: var(--primary-light);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-lg);
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            color: #adb5bd;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .empty-state-text {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: var(--spacing-md);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--spacing-sm);
+            }
+
+            .nav-buttons {
+                width: 100%;
+            }
+
+            .btn-nav {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .stats-overview {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: var(--spacing-sm);
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .table-card, .stat-card {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Error Message (if any) -->
+    <div th:if="${error}" class="error-message">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span th:text="${error}">An error occurred while loading statistics.</span>
+    </div>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="fas fa-chart-bar"></i> Annotator Statistics Overview
+        </h1>
+        <div class="nav-buttons">
+            <a th:href="@{/admin/datasets}" class="btn-nav">
+                <i class="fas fa-database"></i> Datasets
+            </a>
+            <a th:href="@{/admin/annotators}" class="btn-nav">
+                <i class="fas fa-users"></i> Annotators
+            </a>
+            <a th:href="@{/}" class="btn-nav">
+                <i class="fas fa-home"></i> Home
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistics Overview Cards -->
+    <div class="stats-overview">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-value" th:text="${annotators != null ? #lists.size(annotators) : 0}">0</div>
+            <div class="stat-label">Total Annotators</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-tasks"></i>
+            </div>
+            <div class="stat-value" th:text="${annotationsCount != null ? annotationsCount : 0}">0</div>
+            <div class="stat-label">Total Annotations</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div th:if="${averageTimeSpent != null}" class="stat-value" th:text="${#numbers.formatDecimal(averageTimeSpent / 1000.0, 1, 1)} + 's'">0.0s</div>
+            <div th:unless="${averageTimeSpent != null}" class="stat-value">--</div>
+            <div class="stat-label">Avg. Time (seconds)</div>
+            <div th:unless="${averageTimeSpent != null}" class="stat-error">No data available</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-value" th:text="${completedTasks != null ? #lists.size(completedTasks) : 0}">0</div>
+            <div class="stat-label">Completed Tasks</div>
+        </div>
+    </div>
+
+    <!-- Statistics Table -->
+    <div class="table-card">
+        <div class="table-header">
+            <h3 class="table-title">
+                <i class="fas fa-table"></i> Detailed Statistics
+            </h3>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Annotator</th>
+                    <th>Total Annotations</th>
+                    <th>Completed Tasks</th>
+                    <th>Avg. Time</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${annotators != null}" th:each="annotator : ${annotators}">
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-user-circle me-2 text-muted"></i>
+                            <span th:text="${annotator.username != null ? annotator.username : 'Unknown User'}" class="fw-medium">Unknown User</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span th:if="${statsMap != null and statsMap.get(annotator.id) != null}" class="metric-badge metric-high">
+                            <i class="fas fa-edit"></i>
+                            <span th:text="${statsMap.get(annotator.id).totalAnnotations()}">0</span>
+                        </span>
+                        <span th:unless="${statsMap != null and statsMap.get(annotator.id) != null}" class="metric-badge metric-error">
+                            <i class="fas fa-exclamation"></i>
+                            No data
+                        </span>
+                    </td>
+                    <td>
+                        <span th:if="${statsMap != null and statsMap.get(annotator.id) != null}" class="metric-badge metric-medium">
+                            <i class="fas fa-check"></i>
+                            <span th:text="${statsMap.get(annotator.id).completedTasks()}">0</span>
+                        </span>
+                        <span th:unless="${statsMap != null and statsMap.get(annotator.id) != null}" class="metric-badge metric-error">
+                            <i class="fas fa-exclamation"></i>
+                            No data
+                        </span>
+                    </td>
+                    <td>
+                        <span th:if="${statsMap != null and statsMap.get(annotator.id) != null and statsMap.get(annotator.id).avgTime() != null}" class="metric-badge metric-low">
+                            <i class="fas fa-stopwatch"></i>
+                            <span th:text="${statsMap.get(annotator.id).avgTime()}">--</span>
+                        </span>
+                        <span th:unless="${statsMap != null and statsMap.get(annotator.id) != null and statsMap.get(annotator.id).avgTime() != null}" class="metric-badge metric-error">
+                            <i class="fas fa-exclamation"></i>
+                            No data
+                        </span>
+                    </td>
+                    <td>
+                        <a th:href="@{/admin/datasets/annotators/{id}/stats(id=${annotator.id})}"
+                           class="btn-details">
+                            <i class="fas fa-eye"></i> View Details
+                        </a>
+                    </td>
+                </tr>
+
+                <!-- Empty state when no annotators -->
+                <tr th:if="${annotators == null or #lists.isEmpty(annotators)}">
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <p class="empty-state-text">No annotator statistics available</p>
+                            <p>Statistics will appear here once annotators start working on tasks</p>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Error state when statsMap is missing -->
+                <tr th:if="${annotators != null and not #lists.isEmpty(annotators) and statsMap == null}">
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-exclamation-triangle text-warning"></i>
+                            </div>
+                            <p class="empty-state-text">Statistics data is currently unavailable</p>
+                            <p>Please try refreshing the page or contact an administrator if the problem persists</p>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

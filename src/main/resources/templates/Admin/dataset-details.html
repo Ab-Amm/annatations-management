@@ -9,93 +9,122 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Main Theme Colors */
+        /* Enhanced Theme Variables */
         :root {
-            --primary-color: #00590d;      /* Darker green for primary elements */
-            --primary-light: #007a14;      /* Lighter green for hover states */
-            --primary-very-light: #e8f5e9; /* Very light green for backgrounds */
-            --primary-gradient: linear-gradient(135deg, #00590d, #007a14); /* Gradient for headers */
-            --secondary-color: #3a3f44;    /* Dark gray for secondary elements */
-            --info-color: #0288d1;         /* Info blue */
-            --warning-color: #f9a825;      /* Warning yellow */
-            --success-color: #2e7d32;      /* Success green */
-            --danger-color: #c62828;       /* Danger red */
-            --light-bg: #f8f9fa;           /* Light background */
-            --card-border: #e0e0e0;        /* Card border color */
-            --text-muted: #6c757d;         /* Muted text color */
-            --text-white: #ffffff;         /* White text */
-            --text-dark: #212529;          /* Dark text */
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);  /* Small shadow */
-            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08); /* Medium shadow */
-            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12); /* Large shadow */
-            --border-radius: 12px;         /* Border radius for cards */
-            --border-radius-sm: 8px;       /* Smaller border radius */
-            --spacing-xs: 0.5rem;          /* Extra small spacing */
-            --spacing-sm: 1rem;            /* Small spacing */
-            --spacing-md: 1.5rem;          /* Medium spacing */
-            --spacing-lg: 2rem;            /* Large spacing */
-            --spacing-xl: 3rem;            /* Extra large spacing */
-            --font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            --primary-color: #006400;
+            --primary-light: #007a14;
+            --primary-very-light: #e8f5e9;
+            --primary-gradient: linear-gradient(135deg, #006400 0%, #007a14 100%);
+            --secondary-color: #3a3f44;
+            --accent-color: #0288d1;
+            --warning-color: #f9a825;
+            --success-color: #2e7d32;
+            --danger-color: #c62828;
+            --light-bg: #f8f9fa;
+            --card-border: #e0e0e0;
+            --text-muted: #6c757d;
+            --text-white: #ffffff;
+            --text-dark: #212529;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+            --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.15);
+            --border-radius: 16px;
+            --border-radius-sm: 12px;
+            --border-radius-xs: 8px;
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+            --font-family: 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* General Styling */
+        /* Import Inter font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        /* Global Styles */
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: var(--font-family);
-            background-color: #f5f7f9;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             color: var(--text-dark);
-            line-height: 1.7;
-            padding-top: var(--spacing-md);
-            padding-bottom: var(--spacing-xl);
+            line-height: 1.6;
+            padding: var(--spacing-lg) 0;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 1200px;
-            padding: var(--spacing-md);
+            max-width: 1400px;
+            padding: 0 var(--spacing-md);
         }
 
-        /* Page Header */
+        /* Enhanced Page Header */
         .page-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+            padding: var(--spacing-lg);
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
         }
 
         .page-title {
             color: var(--primary-color);
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 2.25rem;
             margin: 0;
+            letter-spacing: -0.025em;
         }
 
         .back-button {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            background-color: var(--light-bg);
-            color: var(--secondary-color);
-            border: 1px solid var(--card-border);
+            gap: 0.75rem;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
             border-radius: var(--border-radius-sm);
-            padding: 0.5rem 1rem;
-            font-weight: 500;
+            padding: 0.875rem 1.5rem;
+            font-weight: 600;
             text-decoration: none;
-            transition: all 0.2s ease;
-        }
-
-        .back-button:hover {
-            background-color: var(--primary-very-light);
-            color: var(--primary-color);
-            transform: translateY(-2px);
+            transition: var(--transition);
             box-shadow: var(--shadow-sm);
         }
 
-        /* Card Styling */
+        .back-button:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Enhanced Card Styling */
         .card {
             border-radius: var(--border-radius);
             box-shadow: var(--shadow-md);
             border: none;
-            margin-bottom: var(--spacing-lg);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: var(--spacing-xl);
+            transition: var(--transition);
             overflow: hidden;
+            background: white;
         }
 
         .card:hover {
@@ -103,101 +132,154 @@
             box-shadow: var(--shadow-lg);
         }
 
-        /* Card Headers */
         .card-header {
-            padding: var(--spacing-md) var(--spacing-lg);
+            padding: var(--spacing-lg);
             font-weight: 600;
             border-bottom: none;
+            position: relative;
         }
 
         .card-header h2,
         .card-header h5 {
             margin: 0;
-            font-weight: 600;
-            letter-spacing: 0.5px;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
 
-        /* Custom Header Colors */
+        .card-header h2 {
+            font-size: 1.75rem;
+        }
+
+        .card-header h5 {
+            font-size: 1.25rem;
+        }
+
+        /* Enhanced Header Backgrounds */
         .bg-primary {
             background: var(--primary-gradient) !important;
+            color: white;
         }
 
         .bg-secondary {
-            background-color: var(--secondary-color) !important;
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #495057 100%) !important;
+            color: white;
         }
 
         .bg-warning {
-            background-color: var(--warning-color) !important;
+            background: linear-gradient(135deg, var(--warning-color) 0%, #ffb300 100%) !important;
+            color: var(--text-dark);
         }
 
         .bg-info {
-            background-color: var(--info-color) !important;
+            background: linear-gradient(135deg, var(--accent-color) 0%, #0277bd 100%) !important;
+            color: white;
         }
 
         .bg-success {
-            background-color: var(--success-color) !important;
+            background: linear-gradient(135deg, var(--success-color) 0%, #388e3c 100%) !important;
+            color: white;
         }
 
-        /* Card Body */
         .card-body {
-            padding: var(--spacing-lg);
-            background-color: white;
+            padding: var(--spacing-xl);
+            background: white;
         }
 
-        /* Dataset Header Card */
-        .dataset-header-card .card-body {
-            padding-top: var(--spacing-md);
-            padding-bottom: var(--spacing-lg);
+        /* Enhanced Dataset Header */
+        .dataset-header-card {
+            background: white;
+            position: relative;
         }
 
         .dataset-stats {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: var(--spacing-lg);
-            margin-bottom: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
         }
 
         .stat-item {
-            flex: 1;
-            min-width: 150px;
+            text-align: center;
+            padding: var(--spacing-md);
+            background: var(--primary-very-light);
+            border-radius: var(--border-radius-sm);
+            border: 1px solid rgba(0, 100, 0, 0.1);
+            transition: var(--transition);
+        }
+
+        .stat-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
         }
 
         .stat-label {
-            font-size: 0.9rem;
+            font-size: 0.875rem;
             color: var(--text-muted);
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .stat-value {
-            font-size: 1.5rem;
-            font-weight: 600;
+            font-size: 2rem;
+            font-weight: 700;
             color: var(--primary-color);
+            line-height: 1;
         }
 
         .dataset-description {
             color: var(--text-dark);
-            font-size: 1rem;
+            font-size: 1.1rem;
             line-height: 1.7;
-            margin-bottom: var(--spacing-md);
-            padding: var(--spacing-md);
-            background-color: var(--primary-very-light);
+            margin-bottom: var(--spacing-lg);
+            padding: var(--spacing-lg);
+            background: linear-gradient(135deg, var(--primary-very-light) 0%, #f0f8f0 100%);
             border-radius: var(--border-radius-sm);
-            border-left: 4px solid var(--primary-light);
+            border-left: 4px solid var(--primary-color);
+            position: relative;
         }
 
-        /* Progress Bars */
+        .dataset-description::before {
+            content: '"';
+            position: absolute;
+            top: var(--spacing-sm);
+            left: var(--spacing-sm);
+            font-size: 3rem;
+            color: var(--primary-color);
+            opacity: 0.3;
+            font-family: Georgia, serif;
+        }
+
+        /* Enhanced Progress Bars */
         .progress {
-            height: 12px;
-            border-radius: 6px;
+            height: 16px;
+            border-radius: 8px;
             overflow: hidden;
-            background-color: #e9ecef;
-            margin: var(--spacing-xs) 0 var(--spacing-sm);
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            background: #e9ecef;
+            margin: var(--spacing-sm) 0;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
         }
 
         .progress-bar {
-            transition: width 0.8s ease;
-            border-radius: 6px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 8px;
+            background: var(--primary-gradient);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background-image: linear-gradient(45deg, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
             background-size: 1rem 1rem;
             animation: progress-bar-stripes 1s linear infinite;
@@ -208,35 +290,55 @@
             to { background-position: 0 0; }
         }
 
-        .progress-bar.bg-success {
-            background-color: var(--success-color) !important;
-        }
-
-        /* Classes Section */
+        /* Enhanced Classes Section */
         .classes-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.75rem;
+            gap: 1rem;
         }
 
         .class-badge {
-            background-color: var(--primary-very-light);
+            background: white;
             color: var(--primary-color);
-            border: 1px solid rgba(0, 89, 13, 0.2);
-            border-radius: 30px;
-            padding: 0.5rem 1rem;
+            border: 2px solid var(--primary-color);
+            border-radius: 50px;
+            padding: 0.75rem 1.5rem;
             font-size: 0.9rem;
-            font-weight: 500;
+            font-weight: 600;
             display: inline-flex;
             align-items: center;
-            transition: all 0.2s ease;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .class-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-gradient);
+            transition: var(--transition);
+            z-index: 0;
+        }
+
+        .class-badge:hover::before {
+            left: 0;
         }
 
         .class-badge:hover {
-            background-color: var(--primary-light);
             color: white;
             transform: translateY(-2px);
-            box-shadow: var(--shadow-sm);
+            box-shadow: var(--shadow-md);
+        }
+
+        .class-badge i,
+        .class-badge span {
+            position: relative;
+            z-index: 1;
         }
 
         .class-badge i {
@@ -244,94 +346,183 @@
             font-size: 0.8rem;
         }
 
-        /* Text Pairs Section */
+        /* Enhanced Text Pairs Section */
         .text-pairs-container {
-            margin-bottom: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
         }
 
         .text-pair-item {
-            background-color: white;
+            background: white;
             border-radius: var(--border-radius-sm);
             border: 1px solid var(--card-border);
-            padding: var(--spacing-md);
-            margin-bottom: var(--spacing-sm);
-            transition: all 0.2s ease;
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+            transition: var(--transition);
             box-shadow: var(--shadow-sm);
+            position: relative;
+        }
+
+        .text-pair-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-gradient);
+            border-radius: 2px 0 0 2px;
+            opacity: 0;
+            transition: var(--transition);
         }
 
         .text-pair-item:hover {
             box-shadow: var(--shadow-md);
             border-color: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .text-pair-item:hover::before {
+            opacity: 1;
         }
 
         .text-content {
-            margin-bottom: var(--spacing-xs);
+            margin-bottom: var(--spacing-sm);
+            padding: var(--spacing-md);
+            background: #f8f9fa;
+            border-radius: var(--border-radius-xs);
+            border-left: 3px solid var(--primary-color);
         }
 
         .text-label {
             color: var(--primary-color);
-            font-weight: 600;
-            margin-right: 0.5rem;
+            font-weight: 700;
+            margin-right: 0.75rem;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .text-value {
-            font-size: 0.95rem;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-dark);
         }
 
         .text-status {
-            margin-top: var(--spacing-sm);
+            margin-top: var(--spacing-md);
             display: flex;
             align-items: center;
+            gap: var(--spacing-sm);
         }
 
-        /* Status Badges */
+        /* Enhanced Status Badges */
         .badge {
-            font-weight: 500;
-            padding: 0.5em 1em;
-            border-radius: 30px;
-            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.75em 1.25em;
+            border-radius: 50px;
+            font-size: 0.8rem;
             display: inline-flex;
             align-items: center;
-        }
-
-        .badge i {
-            margin-right: 0.4rem;
+            gap: 0.5rem;
+            transition: var(--transition);
+            border: 2px solid transparent;
         }
 
         .badge.bg-success {
-            background-color: rgba(46, 125, 50, 0.15) !important;
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.15) 0%, rgba(76, 175, 80, 0.15) 100%) !important;
             color: var(--success-color) !important;
-            border: 1px solid rgba(46, 125, 50, 0.3);
+            border-color: rgba(46, 125, 50, 0.3);
         }
 
         .badge.bg-secondary {
-            background-color: rgba(58, 63, 68, 0.15) !important;
+            background: linear-gradient(135deg, rgba(58, 63, 68, 0.15) 0%, rgba(97, 97, 97, 0.15) 100%) !important;
             color: var(--secondary-color) !important;
-            border: 1px solid rgba(58, 63, 68, 0.3);
+            border-color: rgba(58, 63, 68, 0.3);
         }
 
-        /* Pagination */
+        .badge:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Enhanced Edit Mode */
+        .edit-mode {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .class-select {
+            border-radius: var(--border-radius-xs);
+            border: 2px solid var(--primary-color);
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .class-select:focus {
+            box-shadow: 0 0 0 0.2rem rgba(0, 100, 0, 0.25);
+            border-color: var(--primary-light);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--border-radius-xs);
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            border-color: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background: #1b5e20;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-link {
+            padding: 0.25rem 0.5rem;
+            color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .btn-link:hover {
+            color: var(--primary-light);
+            transform: scale(1.1);
+        }
+
+        /* Enhanced Pagination */
         .pagination {
-            margin-top: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+            justify-content: center;
         }
 
         .page-link {
             color: var(--primary-color);
-            border: 1px solid #dee2e6;
-            padding: 0.5rem 0.75rem;
+            border: 2px solid #dee2e6;
+            padding: 0.75rem 1rem;
             margin: 0 0.25rem;
-            border-radius: var(--border-radius-sm);
-            transition: all 0.2s ease;
+            border-radius: var(--border-radius-xs);
+            transition: var(--transition);
+            font-weight: 500;
         }
 
         .page-item.active .page-link {
-            background-color: var(--primary-color);
+            background: var(--primary-gradient);
             border-color: var(--primary-color);
+            color: white;
         }
 
         .page-link:hover {
-            color: var(--primary-light);
-            background-color: var(--primary-very-light);
+            color: white;
+            background: var(--primary-gradient);
+            border-color: var(--primary-color);
             transform: translateY(-2px);
             box-shadow: var(--shadow-sm);
         }
@@ -339,115 +530,136 @@
         .page-item.disabled .page-link {
             color: var(--text-muted);
             pointer-events: none;
-            background-color: #f8f9fa;
+            background: #f8f9fa;
+            opacity: 0.6;
         }
 
-        /* Annotators Section */
+        /* Enhanced Annotators Section */
         .annotators-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: var(--spacing-md);
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--spacing-lg);
         }
 
         .annotator-card {
-            background-color: white;
+            background: white;
             border-radius: var(--border-radius-sm);
-            border: 1px solid var(--card-border);
-            padding: var(--spacing-md);
-            transition: all 0.2s ease;
+            border: 2px solid var(--card-border);
+            padding: var(--spacing-lg);
+            transition: var(--transition);
             box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .annotator-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+            transform: scaleX(0);
+            transition: var(--transition);
         }
 
         .annotator-card:hover {
-            box-shadow: var(--shadow-md);
-            border-color: var(--primary-light);
-            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+            transform: translateY(-4px);
+        }
+
+        .annotator-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .annotator-card.done {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border-color: var(--success-color);
+        }
+
+        .annotator-card.pending {
+            background: linear-gradient(135deg, #fff8e1 0%, #fffde7 100%);
+            border-color: var(--warning-color);
         }
 
         .annotator-name {
-            font-size: 1.1rem;
-            font-weight: 600;
+            font-size: 1.25rem;
+            font-weight: 700;
             color: var(--primary-color);
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .annotator-name i {
-            margin-right: 0.5rem;
-            font-size: 1rem;
-        }
-
-        .annotator-deadline {
-            font-size: 0.9rem;
-            color: var(--text-muted);
             margin-bottom: 0.75rem;
             display: flex;
             align-items: center;
+            gap: 0.75rem;
+        }
+
+        .annotator-name i {
+            font-size: 1.1rem;
+            padding: 0.5rem;
+            background: var(--primary-very-light);
+            border-radius: 50%;
+            color: var(--primary-color);
+        }
+
+        .annotator-deadline {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
         }
 
         .annotator-deadline i {
-            margin-right: 0.5rem;
-            font-size: 0.9rem;
+            color: var(--accent-color);
         }
 
         .annotator-progress {
-            margin-top: var(--spacing-sm);
+            margin-top: var(--spacing-md);
         }
 
         .progress-label {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.25rem;
-            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
         }
 
         .progress-text {
             color: var(--text-muted);
+            font-weight: 500;
         }
 
         .progress-percentage {
-            font-weight: 600;
+            font-weight: 700;
             color: var(--primary-color);
         }
 
-        .text-status {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .task-status {
+            margin-top: var(--spacing-md);
+            font-weight: 700;
+            font-size: 1rem;
+            text-align: center;
+            padding: 0.75rem;
+            border-radius: var(--border-radius-xs);
         }
 
-        .edit-mode {
-            display: flex;
-            gap: 0.3rem;
-            align-items: center;
+        .annotator-card.done .task-status {
+            background: rgba(46, 125, 50, 0.1);
+            color: var(--success-color);
         }
 
-        .class-select {
-            width: auto;
-            max-width: 200px;
+        .annotator-card.pending .task-status {
+            background: rgba(249, 168, 37, 0.1);
+            color: var(--warning-color);
         }
 
-        .btn-link {
-            padding: 0 0.3rem;
-        }
-
-        /* Responsive Adjustments */
-        @media (max-width: 992px) {
+        /* Responsive Design */
+        @media (max-width: 1200px) {
             .container {
-                padding: var(--spacing-sm);
-            }
-
-            .card-header {
-                padding: var(--spacing-sm) var(--spacing-md);
-            }
-
-            .card-body {
-                padding: var(--spacing-md);
-            }
-
-            .dataset-stats {
-                gap: var(--spacing-md);
+                padding: 0 var(--spacing-sm);
             }
         }
 
@@ -455,7 +667,12 @@
             .page-header {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: var(--spacing-sm);
+                gap: var(--spacing-md);
+                text-align: left;
+            }
+
+            .page-title {
+                font-size: 1.75rem;
             }
 
             .card-header h2 {
@@ -467,27 +684,58 @@
             }
 
             .dataset-stats {
-                flex-direction: column;
+                grid-template-columns: 1fr;
                 gap: var(--spacing-sm);
             }
 
             .annotators-container {
                 grid-template-columns: 1fr;
             }
+
+            .classes-container {
+                justify-content: center;
+            }
+
+            .card-body {
+                padding: var(--spacing-md);
+            }
         }
 
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Enhanced Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .card {
-            animation: fadeIn 0.5s ease-in-out;
+            animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            animation-fill-mode: both;
         }
 
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+
         .text-pair-item {
-            animation: fadeIn 0.5s ease-in-out;
+            animation: slideInLeft 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             animation-fill-mode: both;
         }
 
@@ -498,7 +746,7 @@
         .text-pair-item:nth-child(5) { animation-delay: 0.5s; }
 
         .annotator-card {
-            animation: fadeIn 0.5s ease-in-out;
+            animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             animation-fill-mode: both;
         }
 
@@ -506,66 +754,84 @@
         .annotator-card:nth-child(2) { animation-delay: 0.2s; }
         .annotator-card:nth-child(3) { animation-delay: 0.3s; }
 
-        .annotator-card.done {
-            background-color: #d4edda; /* light green */
-            border: 1px solid #c3e6cb;
+        /* Loading States */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
         }
 
-        .annotator-card.pending {
-            background-color: #fff3cd; /* light yellow */
-            border: 1px solid #ffeeba;
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid var(--primary-color);
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
         }
 
-        .task-status {
-            margin-top: 10px;
-            font-weight: bold;
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
-        .text-status .badge {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-
     </style>
 </head>
 <body>
 <div class="container">
-    <!-- Page Header -->
+    <!-- Enhanced Page Header -->
     <div class="page-header">
-        <h1 class="page-title">Dataset Details</h1>
+        <h1 class="page-title">
+            <i class="fas fa-database me-3"></i>
+            Dataset Details
+        </h1>
         <a href="/admin/datasets" class="back-button">
-            <i class="fas fa-arrow-left"></i> Back to Datasets
+            <i class="fas fa-arrow-left"></i>
+            Back to Datasets
         </a>
     </div>
 
-    <!-- Header Section -->
-    <div class="card dataset-header-card mb-4">
+    <!-- Enhanced Header Section -->
+    <div class="card dataset-header-card">
         <div class="card-header bg-primary text-white">
-            <h2 th:text="${dataset.name}">Dataset Name</h2>
+            <h2 th:text="${dataset.name}">
+                <i class="fas fa-folder-open"></i>
+                Dataset Name
+            </h2>
         </div>
         <div class="card-body">
             <div class="dataset-stats">
                 <div class="stat-item">
-                    <div class="stat-label">Total Text Pairs</div>
+                    <div class="stat-label">
+                        <i class="fas fa-file-text me-1"></i>
+                        Total Text Pairs
+                    </div>
                     <div class="stat-value" th:text="${#numbers.formatInteger(totalCouples, 1, 'COMMA')}">0</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-label">Completion</div>
+                    <div class="stat-label">
+                        <i class="fas fa-chart-pie me-1"></i>
+                        Completion
+                    </div>
                     <div class="stat-value" th:text="${completionPercentage} + '%'">0%</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-label">Annotators</div>
+                    <div class="stat-label">
+                        <i class="fas fa-users me-1"></i>
+                        Annotators
+                    </div>
                     <div class="stat-value" th:text="${#lists.size(dataset.tasks)}">0</div>
                 </div>
             </div>
 
-            <p class="dataset-description" th:text="${dataset.description}">
-                This dataset contains text pairs for sentiment analysis. Each pair consists of two related texts that need to be classified according to their emotional tone.
-            </p>
+            <div class="dataset-description" th:text="${dataset.description}">
+                This dataset contains text pairs for sentiment analysis. Each pair consists of two related texts that need to be classified according to their emotional tone and semantic relationship.
+            </div>
 
             <div class="progress">
-                <div class="progress-bar bg-success"
+                <div class="progress-bar"
                      role="progressbar"
                      th:style="'width: ' + ${completionPercentage} + '%'"
                      th:aria-valuenow="${completionPercentage}"
@@ -573,32 +839,46 @@
                      aria-valuemax="100">
                 </div>
             </div>
+            <div class="text-center mt-2">
+                <small class="text-muted">
+                    <i class="fas fa-info-circle me-1"></i>
+                    <span th:text="${completionPercentage}">0</span>% of annotations completed
+                </small>
+            </div>
         </div>
     </div>
 
-    <!-- Classes Section -->
-    <div class="card mb-4">
+    <!-- Enhanced Classes Section -->
+    <div class="card">
         <div class="card-header bg-secondary text-white">
-            <h5><i class="fas fa-tags"></i> Classification Categories</h5>
+            <h5>
+                <i class="fas fa-tags"></i>
+                Classification Categories
+            </h5>
         </div>
         <div class="card-body">
             <div class="classes-container">
                 <span th:each="classe : ${dataset.classesPossible}"
                       class="class-badge"
                       th:text="${classe.touteClasse}">
-                    <i class="fas fa-tag"></i> Class
+                    <i class="fas fa-tag"></i>
+                    <span>Class</span>
                 </span>
             </div>
         </div>
     </div>
 
-    <!-- Text Pairs Section -->
-    <div class="card mb-4">
+    <!-- Enhanced Text Pairs Section -->
+    <div class="card">
         <div class="card-header bg-warning text-dark">
-            <h5><i class="fas fa-file-alt"></i> Text Pairs
-                <small>(Showing <span th:text="${currentPage * 100 + 1}"></span>-<span
+            <h5>
+                <i class="fas fa-file-alt"></i>
+                Text Pairs
+                <small class="ms-2 opacity-75">
+                    (Showing <span th:text="${currentPage * 100 + 1}"></span>-<span
                         th:text="${(currentPage + 1) * 100 > totalCouples ? totalCouples : (currentPage + 1) * 100}"></span>
-                    of <span th:text="${totalCouples}"></span>)</small>
+                    of <span th:text="${totalCouples}"></span>)
+                </small>
             </h5>
         </div>
         <div class="card-body">
@@ -607,18 +887,24 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="text-content">
-                                <span class="text-label">Text 1:</span>
-                                <span class="text-value" th:text="${couple.text1}"></span>
+                                <span class="text-label">
+                                    <i class="fas fa-quote-left me-1"></i>
+                                    Text 1:
+                                </span>
+                                <div class="text-value" th:text="${couple.text1}"></div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="text-content">
-                                <span class="text-label">Text 2:</span>
-                                <span class="text-value" th:text="${couple.text2}"></span>
+                                <span class="text-label">
+                                    <i class="fas fa-quote-right me-1"></i>
+                                    Text 2:
+                                </span>
+                                <div class="text-value" th:text="${couple.text2}"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="text-status" >
+                    <div class="text-status">
                         <!-- View Mode -->
                         <div class="view-mode">
                             <span th:if="${couple.done}" class="badge bg-success">
@@ -626,55 +912,59 @@
                                 <span class="annotation-class" th:text="${couple.annotation?.chosenClass}"></span>
                                 <button class="btn btn-sm btn-link edit-trigger"
                                         th:if="${couple.done}"
-                                        th:data-annotation-id="${couple.annotation?.id}">
+                                        th:data-annotation-id="${couple.annotation?.id}"
+                                        title="Edit annotation">
                                     <i class="fas fa-edit"></i>
                                 </button>
                             </span>
                             <span th:unless="${couple.done}" class="badge bg-secondary">
-                                <i class="fas fa-clock"></i> Pending
+                                <i class="fas fa-clock"></i>
+                                Pending
                             </span>
                         </div>
 
                         <!-- Edit Mode (Hidden by default) -->
                         <div class="edit-mode d-none">
-                            <label>
-                                <select class="form-select form-select-sm class-select"
-                                        th:data-annotation-id="${couple.annotation?.id}">
-                                    <option th:each="classe : ${couple.dataset.classesPossible}"
-                                            th:value="${classe.touteClasse}"
-                                            th:text="${classe.touteClasse}"
-                                            th:selected="${classe.touteClasse == couple.annotation?.chosenClass}"></option>
-                                </select>
-                            </label>
-                            <button class="btn btn-sm btn-success save-btn">
+                            <select class="form-select form-select-sm class-select"
+                                    th:data-annotation-id="${couple.annotation?.id}">
+                                <option th:each="classe : ${couple.dataset.classesPossible}"
+                                        th:value="${classe.touteClasse}"
+                                        th:text="${classe.touteClasse}"
+                                        th:selected="${classe.touteClasse == couple.annotation?.chosenClass}"></option>
+                            </select>
+                            <button class="btn btn-sm btn-success save-btn" title="Save changes">
                                 <i class="fas fa-check"></i>
                             </button>
-                            <button class="btn btn-sm btn-secondary cancel-btn">
+                            <button class="btn btn-sm btn-secondary cancel-btn" title="Cancel">
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-            <!-- Pagination -->
+            <!-- Enhanced Pagination -->
             <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center">
+                <ul class="pagination">
                     <li class="page-item" th:class="${currentPage == 0} ? 'disabled'">
                         <a class="page-link"
                            th:href="@{/admin/datasets/details/{id}(id=${dataset.id}, page=${currentPage - 1})}">
-                            <i class="fas fa-chevron-left"></i> Previous
+                            <i class="fas fa-chevron-left me-1"></i>
+                            Previous
                         </a>
                     </li>
                     <li class="page-item active">
-                        <span class="page-link" th:text="${currentPage + 1}">1</span>
+                        <span class="page-link">
+                            <i class="fas fa-file-alt me-1"></i>
+                            Page <span th:text="${currentPage + 1}">1</span>
+                        </span>
                     </li>
                     <li class="page-item"
                         th:class="${(currentPage + 1) * 100 >= totalCouples} ? 'disabled'">
                         <a class="page-link"
                            th:href="@{/admin/datasets/details/{id}(id=${dataset.id}, page=${currentPage + 1})}">
-                            Next <i class="fas fa-chevron-right"></i>
+                            Next
+                            <i class="fas fa-chevron-right ms-1"></i>
                         </a>
                     </li>
                 </ul>
@@ -682,10 +972,13 @@
         </div>
     </div>
 
-    <!-- Annotators Section -->
+    <!-- Enhanced Annotators Section -->
     <div class="card">
         <div class="card-header bg-info text-white">
-            <h5><i class="fas fa-users"></i> Assigned Annotators</h5>
+            <h5>
+                <i class="fas fa-users"></i>
+                Assigned Annotators
+            </h5>
         </div>
         <div class="card-body">
             <div class="annotators-container">
@@ -701,32 +994,49 @@
 
                     <div class="annotator-deadline">
                         <i class="fas fa-calendar-alt"></i>
-                        Deadline: <span th:text="${#temporals.format(task.deadline, 'dd MMM yyyy')}"></span>
+                        <strong>Deadline:</strong>
+                        <span th:text="${#temporals.format(task.deadline, 'dd MMM yyyy')}"></span>
                     </div>
 
                     <div class="annotator-progress">
                         <div class="progress-label">
-                            <span class="progress-text">Progress</span>
+                            <span class="progress-text">
+                                <i class="fas fa-tasks me-1"></i>
+                                Progress
+                            </span>
                             <span class="progress-percentage"
                                   th:text="${#numbers.formatDecimal(task.couplesDone * 100 / task.coupleTexts.size(), 1, 2)} + '%'">
                             </span>
                         </div>
-                        <div class="progress" style="height: 10px;">
+                        <div class="progress">
                             <div class="progress-bar"
                                  role="progressbar"
                                  th:style="'width: ' + ${task.couplesDone * 100 / task.coupleTexts.size()} + '%'"
-                                 th:text="${#numbers.formatDecimal(task.couplesDone * 100 / task.coupleTexts.size(), 1, 2)} + '%'">
-                                75%
+                                 th:aria-valuenow="${task.couplesDone * 100 / task.coupleTexts.size()}"
+                                 aria-valuemin="0"
+                                 aria-valuemax="100">
                             </div>
+                        </div>
+                        <div class="text-center mt-2">
+                            <small class="text-muted">
+                                <span th:text="${task.couplesDone}">0</span> of
+                                <span th:text="${task.coupleTexts.size()}">0</span> completed
+                            </small>
                         </div>
                     </div>
 
-                    <!-- Status Label -->
+                    <!-- Enhanced Status Label -->
                     <div class="task-status">
-                        <span th:text="${task.allCouplesDone ? '✔ Done' : '⏳ Pending'}"></span>
+                        <span th:if="${task.allCouplesDone}">
+                            <i class="fas fa-check-circle me-2"></i>
+                            Completed
+                        </span>
+                        <span th:unless="${task.allCouplesDone}">
+                            <i class="fas fa-clock me-2"></i>
+                            In Progress
+                        </span>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -734,55 +1044,125 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    document.querySelectorAll('.edit-trigger').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const parent = e.target.closest('.text-status');
-            parent.querySelector('.view-mode').classList.add('d-none');
-            parent.querySelector('.edit-mode').classList.remove('d-none');
+    // Enhanced JavaScript with better UX
+    document.addEventListener('DOMContentLoaded', function() {
+        // Edit functionality
+        document.querySelectorAll('.edit-trigger').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const parent = e.target.closest('.text-status');
+                parent.querySelector('.view-mode').classList.add('d-none');
+                parent.querySelector('.edit-mode').classList.remove('d-none');
+
+                // Focus on select element
+                const select = parent.querySelector('.class-select');
+                select.focus();
+            });
         });
-    });
 
-    document.querySelectorAll('.cancel-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const parent = e.target.closest('.text-status');
-            parent.querySelector('.view-mode').classList.remove('d-none');
-            parent.querySelector('.edit-mode').classList.add('d-none');
+        // Cancel functionality
+        document.querySelectorAll('.cancel-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const parent = e.target.closest('.text-status');
+                parent.querySelector('.view-mode').classList.remove('d-none');
+                parent.querySelector('.edit-mode').classList.add('d-none');
+            });
         });
-    });
 
-    document.querySelectorAll('.save-btn').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-            const parent = e.target.closest('.edit-mode');
-            const annotationId = parent.querySelector('.class-select').dataset.annotationId;
-            const newClass = parent.querySelector('.class-select').value;
+        // Save functionality with enhanced UX
+        document.querySelectorAll('.save-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const parent = e.target.closest('.edit-mode');
+                const annotationId = parent.querySelector('.class-select').dataset.annotationId;
+                const newClass = parent.querySelector('.class-select').value;
 
-            try {
-                const response = await fetch('/api/annotations/' + annotationId, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').content
-                    },
-                    body: JSON.stringify({ chosenClass: newClass })
-                });
+                // Add loading state
+                btn.classList.add('loading');
+                btn.disabled = true;
 
-                if (response.ok) {
-                    // Find the text-status container from the current edit-mode
-                    const parentStatus = e.target.closest('.text-status');
+                try {
+                    const response = await fetch('/api/annotations/' + annotationId, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').content
+                        },
+                        body: JSON.stringify({ chosenClass: newClass })
+                    });
 
-                    // Update the annotation class text in the view mode
-                    const annotationClass = parentStatus.querySelector('.annotation-class');
-                    annotationClass.textContent = newClass;
+                    if (response.ok) {
+                        // Find the text-status container from the current edit-mode
+                        const parentStatus = e.target.closest('.text-status');
 
-                    // Switch back to view mode
-                    parentStatus.querySelector('.view-mode').classList.remove('d-none');
-                    parentStatus.querySelector('.edit-mode').classList.add('d-none');
+                        // Update the annotation class text in the view mode
+                        const annotationClass = parentStatus.querySelector('.annotation-class');
+                        annotationClass.textContent = newClass;
+
+                        // Switch back to view mode with animation
+                        parentStatus.querySelector('.view-mode').classList.remove('d-none');
+                        parentStatus.querySelector('.edit-mode').classList.add('d-none');
+
+                        // Show success feedback
+                        const badge = parentStatus.querySelector('.badge');
+                        badge.style.animation = 'pulse 0.5s ease-in-out';
+
+                        setTimeout(() => {
+                            badge.style.animation = '';
+                        }, 500);
+                    } else {
+                        throw new Error('Update failed');
+                    }
+                } catch (error) {
+                    console.error('Update failed:', error);
+
+                    // Show error feedback
+                    const errorMsg = document.createElement('div');
+                    errorMsg.className = 'alert alert-danger alert-dismissible fade show mt-2';
+                    errorMsg.innerHTML = `
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error updating annotation. Please try again.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    `;
+                    parent.appendChild(errorMsg);
+
+                    // Auto-remove error after 5 seconds
+                    setTimeout(() => {
+                        if (errorMsg.parentNode) {
+                            errorMsg.remove();
+                        }
+                    }, 5000);
+                } finally {
+                    // Remove loading state
+                    btn.classList.remove('loading');
+                    btn.disabled = false;
                 }
-            } catch (error) {
-                console.error('Update failed:', error);
-                alert('Error updating annotation');
+            });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Escape key to cancel edit mode
+            if (e.key === 'Escape') {
+                const activeEditMode = document.querySelector('.edit-mode:not(.d-none)');
+                if (activeEditMode) {
+                    const cancelBtn = activeEditMode.querySelector('.cancel-btn');
+                    if (cancelBtn) cancelBtn.click();
+                }
             }
         });
+
+        // Add pulse animation for CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+        `;
+        document.head.appendChild(style);
     });
 </script>
 </body>

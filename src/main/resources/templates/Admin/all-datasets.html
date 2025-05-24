@@ -292,7 +292,7 @@
         <tbody>
         <tr th:each="dataset : ${datasets}">
             <td th:text="${dataset.name}">Dataset Name</td>
-            <td th:text="${dataset.description}">Description</td>
+            <td th:text="${dataset.description.length() > 40 ? dataset.description.substring(0, 40) + '...' : dataset.description}">Description</td>
             <td>
                 <div class="progress" style="height: 10px; border-radius: 5px; background-color: #e9ecef; overflow: hidden;">
                     <div class="progress-bar"

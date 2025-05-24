@@ -45,6 +45,7 @@ public class AnnotatorManagementService {
         }
 
         String rawPassword = generateRandomPassword(8);
+        System.out.println("Generated raw password for user " + annotator.getUsername() + ": " + rawPassword);
         annotator.setPassword(passwordEncoder.encode(rawPassword));
         annotator.setRole(Role.ROLE_ANNOTATOR);
         annotator.setDeleted(false);
