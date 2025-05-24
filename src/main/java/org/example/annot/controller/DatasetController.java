@@ -3,10 +3,7 @@ package org.example.annot.controller;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import org.example.annot.model.Annotator;
-import org.example.annot.model.ClassePossible;
-import org.example.annot.model.CoupleText;
-import org.example.annot.model.Dataset;
+import org.example.annot.model.*;
 import org.example.annot.repository.AnnotatorRepository;
 import org.example.annot.repository.ClassePossibleRepository;
 import org.example.annot.repository.CoupleTextRepository;
@@ -27,7 +24,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -205,17 +204,35 @@ public class DatasetController {
         response.setHeader("Content-Disposition", "attachment; filename=dataset-" + id + ".csv");
 
         try (PrintWriter writer = response.getWriter()) {
-            writer.println("text1,text2,annotation");
+            writer.println("text1,text2,annotation,annotator,annotation_date");
 
             for (CoupleText couple : dataset.getCoupleText()) {
-                String annotation = couple.getAnnotation() != null ?
-                        couple.getAnnotation().getChosenClass() :
-                        "";
+                String annotation = "";
+                String annotator = "";
+                String annotationDate = "";
+                if (couple.getAnnotation() != null) {
+                    Annotation ann = couple.getAnnotation();
+                    annotation = ann.getChosenClass();
 
+                    // Get annotator username if available
+                    if (ann.getAnnotator() != null) {
+                        annotator = ann.getAnnotator().getUsername();
+                    }
+
+                    // Format date if available
+                    if (ann.getCreationDate() != null) {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        annotationDate = sdf.format(ann.getCreationDate());
+                    }
+                }
+
+                // Escape quotes and build CSV line
                 writer.println(
                         "\"" + couple.getText1().replace("\"", "\"\"") + "\"," +
                                 "\"" + couple.getText2().replace("\"", "\"\"") + "\"," +
-                                "\"" + annotation.replace("\"", "\"\"") + "\""
+                                "\"" + annotation.replace("\"", "\"\"") + "\"," +
+                                "\"" + annotator.replace("\"", "\"\"") + "\"," +
+                                "\"" + annotationDate.replace("\"", "\"\"") + "\""
                 );
             }
         }

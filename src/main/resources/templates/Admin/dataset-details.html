@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Dataset Details</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -409,6 +411,27 @@
             color: var(--primary-color);
         }
 
+        .text-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .edit-mode {
+            display: flex;
+            gap: 0.3rem;
+            align-items: center;
+        }
+
+        .class-select {
+            width: auto;
+            max-width: 200px;
+        }
+
+        .btn-link {
+            padding: 0 0.3rem;
+        }
+
         /* Responsive Adjustments */
         @media (max-width: 992px) {
             .container {
@@ -595,16 +618,41 @@
                             </div>
                         </div>
                     </div>
-                    <div class="text-status">
-                <span th:if="${couple.done}" class="badge bg-success">
-                    <i class="fas fa-check-circle"></i> Annotated
-                    <span th:if="${couple.annotation != null}" class="ms-2">
-                        [[${couple.annotation.chosenClass}]]
-                    </span>
-                </span>
-                        <span th:unless="${couple.done}" class="badge bg-secondary">
-                    <i class="fas fa-clock"></i> Pending
-                </span>
+                    <div class="text-status" >
+                        <!-- View Mode -->
+                        <div class="view-mode">
+                            <span th:if="${couple.done}" class="badge bg-success">
+                                <i class="fas fa-check-circle"></i>
+                                <span class="annotation-class" th:text="${couple.annotation?.chosenClass}"></span>
+                                <button class="btn btn-sm btn-link edit-trigger"
+                                        th:if="${couple.done}"
+                                        th:data-annotation-id="${couple.annotation?.id}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </span>
+                            <span th:unless="${couple.done}" class="badge bg-secondary">
+                                <i class="fas fa-clock"></i> Pending
+                            </span>
+                        </div>
+
+                        <!-- Edit Mode (Hidden by default) -->
+                        <div class="edit-mode d-none">
+                            <label>
+                                <select class="form-select form-select-sm class-select"
+                                        th:data-annotation-id="${couple.annotation?.id}">
+                                    <option th:each="classe : ${couple.dataset.classesPossible}"
+                                            th:value="${classe.touteClasse}"
+                                            th:text="${classe.touteClasse}"
+                                            th:selected="${classe.touteClasse == couple.annotation?.chosenClass}"></option>
+                                </select>
+                            </label>
+                            <button class="btn btn-sm btn-success save-btn">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="btn btn-sm btn-secondary cancel-btn">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -647,8 +695,8 @@
                     <div class="annotator-name">
                         <i class="fas fa-user"></i>
                         <span th:text="${task.annotator.firstName + ' ' + task.annotator.lastName}">
-            Annotator Name
-        </span>
+                            Annotator Name
+                        </span>
                     </div>
 
                     <div class="annotator-deadline">
@@ -661,7 +709,7 @@
                             <span class="progress-text">Progress</span>
                             <span class="progress-percentage"
                                   th:text="${#numbers.formatDecimal(task.couplesDone * 100 / task.coupleTexts.size(), 1, 2)} + '%'">
-            </span>
+                            </span>
                         </div>
                         <div class="progress" style="height: 10px;">
                             <div class="progress-bar"
@@ -685,6 +733,57 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<script>
+    document.querySelectorAll('.edit-trigger').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const parent = e.target.closest('.text-status');
+            parent.querySelector('.view-mode').classList.add('d-none');
+            parent.querySelector('.edit-mode').classList.remove('d-none');
+        });
+    });
+
+    document.querySelectorAll('.cancel-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const parent = e.target.closest('.text-status');
+            parent.querySelector('.view-mode').classList.remove('d-none');
+            parent.querySelector('.edit-mode').classList.add('d-none');
+        });
+    });
+
+    document.querySelectorAll('.save-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const parent = e.target.closest('.edit-mode');
+            const annotationId = parent.querySelector('.class-select').dataset.annotationId;
+            const newClass = parent.querySelector('.class-select').value;
+
+            try {
+                const response = await fetch('/api/annotations/' + annotationId, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').content
+                    },
+                    body: JSON.stringify({ chosenClass: newClass })
+                });
+
+                if (response.ok) {
+                    // Find the text-status container from the current edit-mode
+                    const parentStatus = e.target.closest('.text-status');
+
+                    // Update the annotation class text in the view mode
+                    const annotationClass = parentStatus.querySelector('.annotation-class');
+                    annotationClass.textContent = newClass;
+
+                    // Switch back to view mode
+                    parentStatus.querySelector('.view-mode').classList.remove('d-none');
+                    parentStatus.querySelector('.edit-mode').classList.add('d-none');
+                }
+            } catch (error) {
+                console.error('Update failed:', error);
+                alert('Error updating annotation');
+            }
+        });
+    });
+</script>
 </body>
 </html>

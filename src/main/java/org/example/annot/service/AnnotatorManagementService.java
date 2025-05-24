@@ -2,9 +2,11 @@ package org.example.annot.service;
 
 
 
+import jakarta.persistence.EntityNotFoundException;
 import org.example.annot.model.Annotator;
 import org.example.annot.model.Role;
 import org.example.annot.repository.AnnotatorRepository;
+import org.example.annot.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,9 @@ public class AnnotatorManagementService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private TaskRepository taskRepository;
 
     public String generateRandomPassword(int length) {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$";
@@ -47,10 +52,19 @@ public class AnnotatorManagementService {
     }
 
     public void softDeleteAnnotator(Long id) {
-        annotatorRepository.findById(id).ifPresent(a -> {
-            a.setDeleted(true);
-            annotatorRepository.save(a);
-        });
+        Annotator annotator = annotatorRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Annotator not found"));
+
+        if (hasUnfinishedTasks(id)) {
+            throw new IllegalStateException("Annotator has unfinished tasks");
+        }
+
+        annotator.setDeleted(true);
+        annotatorRepository.save(annotator);
+    }
+
+    public boolean hasUnfinishedTasks(Long annotatorId) {
+        return taskRepository.existsByAnnotatorIdAndAllCouplesDoneFalse(annotatorId);
     }
 
     public void updateAnnotator(Annotator annotator) {
@@ -70,5 +84,7 @@ public class AnnotatorManagementService {
     public List<Annotator> findAllAnnotators() {
         return annotatorRepository.findByDeletedFalse();
     }
+
+
 }
 

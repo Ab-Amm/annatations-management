@@ -4,6 +4,8 @@ package org.example.annot.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -25,5 +27,5 @@ public class Annotation {
     @JoinColumn(name = "couple_text_id", unique = true)
     private CoupleText coupleText;
 
-
+    private Date creationDate = new java.util.Date();
 }

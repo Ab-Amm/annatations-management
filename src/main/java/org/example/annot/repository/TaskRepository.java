@@ -21,5 +21,10 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     @Query("SELECT t FROM Task t LEFT JOIN FETCH t.coupleTexts WHERE t.id = :id")
     Optional<Task> findByIdWithCouples(@Param("id") Long id);
 
+    boolean existsByAnnotatorIdAndAllCouplesDoneFalse(Long annotatorId);
+
+
+    @Query("SELECT t FROM Task t WHERE t.id = :taskId")
+    Task findTaskWithCoupleTexts(@Param("taskId") Long taskId);
 }
 

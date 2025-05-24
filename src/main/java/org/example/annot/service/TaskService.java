@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -79,6 +80,29 @@ public class TaskService {
     }
 
 
+    public Integer findNextUnannotatedIndex(Long taskId, int currentIndex) {
+        Task task = taskRepository.findTaskWithCoupleTexts(taskId);
+        List<CoupleText> couples = task.getCoupleTexts().stream()
+                .sorted(Comparator.comparingLong(CoupleText::getId))
+                .toList();
+
+        for (int i = currentIndex + 1; i < couples.size(); i++) {
+            if (!couples.get(i).isDone()) return i;
+        }
+        return null;
+    }
+
+    public Integer findPrevUnannotatedIndex(Long taskId, int currentIndex) {
+        Task task = taskRepository.findTaskWithCoupleTexts(taskId);
+        List<CoupleText> couples = task.getCoupleTexts().stream()
+                .sorted(Comparator.comparingLong(CoupleText::getId))
+                .toList();
+
+        for (int i = currentIndex - 1; i >= 0; i--) {
+            if (!couples.get(i).isDone()) return i;
+        }
+        return null;
+    }
 
 
 }

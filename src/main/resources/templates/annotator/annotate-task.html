@@ -101,6 +101,20 @@
             </div>
         </div>
 
+        <div class="d-flex gap-2">
+            <a th:if="${prevUnannotatedIndex != null}"
+               th:href="@{/annotator/tasks/annotateTask/{taskId}/navigateUnannotated(taskId=${task.id}, currentIndex=${currentIndex}, direction='prev')}"
+               class="btn btn-outline-warning">
+                <i class="bi bi-skip-backward"></i> Previous Unannotated
+            </a>
+
+            <a th:if="${nextUnannotatedIndex != null}"
+               th:href="@{/annotator/tasks/annotateTask/{taskId}/navigateUnannotated(taskId=${task.id}, currentIndex=${currentIndex}, direction='next')}"
+               class="btn btn-outline-warning">
+                Next Unannotated <i class="bi bi-skip-forward"></i>
+            </a>
+        </div>
+
         <!-- Text Pair Card -->
         <div class="card shadow-sm" th:if="${currentCouple}">
             <div class="card-header bg-primary-very-light text-dark">

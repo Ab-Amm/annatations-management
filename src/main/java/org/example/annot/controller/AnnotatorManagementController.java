@@ -1,5 +1,6 @@
 package org.example.annot.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.example.annot.model.Annotator;
 import org.example.annot.service.AnnotatorManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +39,20 @@ public class AnnotatorManagementController {
     }
 
     @GetMapping("/delete/{id}")
-    public String softDelete(@PathVariable Long id) {
-        annotatorManagementService.softDeleteAnnotator(id);
+    public String softDelete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            if (annotatorManagementService.hasUnfinishedTasks(id)) {
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "Cannot delete annotator - they have unfinished tasks!");
+            } else {
+                annotatorManagementService.softDeleteAnnotator(id);
+                redirectAttributes.addFlashAttribute("successMessage",
+                        "Annotator deleted successfully!");
+            }
+        } catch (EntityNotFoundException e) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Annotator not found!");
+        }
         return "redirect:/admin/annotators";
     }
 

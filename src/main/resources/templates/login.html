@@ -7,181 +7,197 @@
     <style>
         /* Variables */
         :root {
-            --primary-color: #006400;      /* Dark green (Thymeleaf brand color) */
-            --primary-light: #008000;      /* Lighter green for hover states */
-            --primary-very-light: #f0f7f0; /* Very light green for backgrounds */
-            --text-color: #333333;         /* Dark gray for text */
-            --error-color: #dc3545;        /* Red for error messages */
-            --border-color: #dddddd;       /* Light gray for borders */
-            --shadow-color: rgba(0, 100, 0, 0.1); /* Green-tinted shadow */
+            --primary-color: #006400;
+            --primary-light: #e8f5e9;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --error-color: #dc3545;
+            --shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
         }
 
         /* Base Styles */
         body {
             font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f5f5f5;
+            background-color: var(--primary-light);
             color: var(--text-color);
-            line-height: 1.6;
+            line-height: 1.5;
             margin: 0;
-            padding: 0;
+            padding: 2rem;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             min-height: 100vh;
         }
 
-        /* Container */
-        .login-container {
+        /* Login Card */
+        .login-card {
             background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 16px var(--shadow-color);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
             width: 100%;
-            max-width: 400px;
-            padding: 2rem;
-            margin: 2rem auto;
+            max-width: 380px;
+            padding: 2.5rem;
         }
 
-        /* Header */
-        h1 {
-            color: var(--primary-color);
+        /* Logo & Header */
+        .login-header {
             text-align: center;
-            margin-bottom: 1.5rem;
-            font-weight: 600;
-            font-size: 1.8rem;
+            margin-bottom: 2rem;
         }
 
-        /* Logo */
         .logo {
-            display: block;
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 1.5rem;
+            width: 70px;
+            height: 70px;
+            margin-bottom: 1.25rem;
+        }
+
+        .login-title {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
         }
 
         /* Form Elements */
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.2rem;
-        }
-
         .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+            margin-bottom: 1.5rem;
         }
 
-        label {
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
             font-weight: 500;
             color: var(--text-color);
-            font-size: 0.95rem;
         }
 
-        input[type="text"],
-        input[type="password"] {
-            padding: 0.8rem 1rem;
+        .form-control {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1rem;
+            background-color: #f9f9f9;
             border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 1rem;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            border-radius: 6px;
+            transition: all 0.2s;
         }
 
-        input[type="text"]:focus,
-        input[type="password"]:focus {
-            outline: none;
+        .form-control:focus {
+            background-color: white;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(0, 100, 0, 0.1);
-        }
-
-        /* Submit Button */
-        .submit-btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 0.8rem 1rem;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin-top: 0.5rem;
-        }
-
-        .submit-btn:hover {
-            background-color: var(--primary-light);
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 100, 0, 0.1);
         }
 
         /* Error Message */
-        .error {
+        .error-message {
             color: var(--error-color);
             background-color: rgba(220, 53, 69, 0.1);
-            padding: 0.8rem;
-            border-radius: 4px;
-            margin-bottom: 1rem;
+            padding: 0.75rem;
+            margin-bottom: 1.5rem;
             font-size: 0.9rem;
-            text-align: center;
+            border-radius: 6px;
+        }
+
+        /* Button */
+        .btn-login {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-login:hover {
+            background-color: #005000;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
         }
 
         /* Footer */
-        .footer {
+        .login-footer {
             text-align: center;
             margin-top: 2rem;
+            color: var(--text-muted);
             font-size: 0.85rem;
-            color: #666;
         }
 
-        .footer a {
+        .login-footer a {
             color: var(--primary-color);
             text-decoration: none;
         }
 
-        .footer a:hover {
+        .login-footer a:hover {
             text-decoration: underline;
         }
 
-        /* Responsive Adjustments */
-        @media (max-width: 480px) {
-            .login-container {
-                margin: 1rem;
-                padding: 1.5rem;
-            }
+        /* Remember Me Checkbox */
+        .remember-me {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
 
-            h1 {
-                font-size: 1.5rem;
-            }
+        .remember-me input {
+            margin-right: 0.5rem;
+        }
+
+        .remember-me label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
         }
     </style>
 </head>
 <body>
-<div class="login-container">
-    <!-- Thymeleaf Logo -->
-    <img alt="Thymeleaf Logo" class="logo" th:src="@{/images/logo.svg}">
-
-    <h1>Annotation Platform</h1>
+<div class="login-card">
+    <div class="login-header">
+        <img alt="Thymeleaf Logo" class="logo" th:src="@{/images/logo.svg}">
+        <h1 class="login-title">Annotation Platform</h1>
+        <p class="login-subtitle">Welcome back</p>
+    </div>
 
     <!-- Error Message -->
-    <div th:if="${param.error}" class="error">
+    <div th:if="${param.error}" class="error-message">
         Invalid username or password
     </div>
 
     <!-- Login Form -->
     <form th:action="@{/login}" method="post">
         <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" required autofocus/>
+            <label for="username" class="form-label">Username</label>
+            <input type="text" id="username" name="username" class="form-control" required autofocus>
         </div>
 
         <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required/>
+            <label for="password" class="form-label">Password</label>
+            <input type="password" id="password" name="password" class="form-control" required>
         </div>
 
-        <button type="submit" class="submit-btn">Sign In</button>
+        <div class="remember-me">
+            <input type="checkbox" id="remember-me" name="remember-me">
+            <label for="remember-me">Remember me</label>
+        </div>
+
+        <button type="submit" class="btn-login">Sign In</button>
     </form>
 
-    <div class="footer">
-        <p>Powered by <a href="https://www.thymeleaf.org" target="_blank">Thymeleaf</a></p>
+    <div class="login-footer">
+        Powered by <a href="https://www.thymeleaf.org" target="_blank">Thymeleaf</a>
     </div>
 </div>
 </body>

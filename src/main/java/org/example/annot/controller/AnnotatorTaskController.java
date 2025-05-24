@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -87,7 +88,29 @@ public class AnnotatorTaskController {
         model.addAttribute("currentAnnotation", annotation);model.addAttribute("pageTitle", "Annotation Task");
         model.addAttribute("activeMenu", "tasks");
 
+        model.addAttribute("nextUnannotatedIndex",
+                taskService.findNextUnannotatedIndex(taskId, currentIndex));
+        model.addAttribute("prevUnannotatedIndex",
+                taskService.findPrevUnannotatedIndex(taskId, currentIndex));
+
         return "annotator/annotate-task";
+    }
+
+    @GetMapping("/annotateTask/{taskId}/navigateUnannotated")
+    public String navigateUnannotated(
+            @PathVariable Long taskId,
+            @RequestParam int currentIndex,
+            @RequestParam String direction) {
+
+        Integer newIndex = "next".equalsIgnoreCase(direction)
+                ? taskService.findNextUnannotatedIndex(taskId, currentIndex)
+                : taskService.findPrevUnannotatedIndex(taskId, currentIndex);
+
+        if (newIndex == null) {
+            newIndex = currentIndex; // Stay on current if none found
+        }
+
+        return "redirect:/annotator/tasks/annotateTask/" + taskId + "?currentIndex=" + newIndex;
     }
 
 
@@ -107,6 +130,12 @@ public class AnnotatorTaskController {
             coupleTextRepository.save(coupleText);
             annotation.setCoupleText(coupleText);
             annotation.setChosenClass(selectedClass);
+
+            Annotator annotator = annotatorRepository.findByUsername(
+                            SecurityContextHolder.getContext().getAuthentication().getName())
+                    .orElseThrow(() -> new UsernameNotFoundException("Annotator not found"));
+            annotation.setAnnotator(annotator);
+
             annotationService.saveAnnotation(annotation);
 
 
